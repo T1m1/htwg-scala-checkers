@@ -16,6 +16,13 @@ Other requirements:
  - Full web user interface WUI (Play)
  - Build in sbt and eclipse
  - **Follow the spirit of Scala**
+ 
+## Setup
+You need:
+ - Scala (and Java)
+ - sbt (activator)
+ 
+Intellij has some problems with some sbt syntax. Try deleting the _.idea_ folder, update/reload the project with sbt in the commandline and reimport the project to intellij.
 
 ## Disclaimer
 This project is for educational purposes only. You can try to checkout and play it yourself, but it will not be finished until 02/2017.
