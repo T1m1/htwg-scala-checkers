@@ -1,19 +1,18 @@
-name          := "htwg-scala-checkers"
-organization  := "RuGo"
-version       := "0.0.1"
-scalaVersion  := "2.11.8"
+name := "htwg-scala-checkers"
+organization := "RuGo"
+version := "0.0.1"
+scalaVersion := "2.11.8"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= {
-  val scalaTestV       = "3.0.0-M15"
-  val scalaMockV       = "3.2.2"
+  val scalaTestV = "3.0.0-M15"
+  val scalaMockV = "3.2.2"
   Seq(
-    "org.scalatest" %% "scalatest"                   % scalaTestV       % "test",
-    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockV       % "test"
+    "org.scalatest" %% "scalatest" % scalaTestV % "test",
+    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockV % "test"
   )
 }
-
 
 fork in run := true
