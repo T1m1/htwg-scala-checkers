@@ -1,5 +1,5 @@
-name          := "htwg-scala-seed"
-organization  := "de.htwg.se"
+name          := "htwg-scala-checkers"
+organization  := "RuGo"
 version       := "0.0.1"
 scalaVersion  := "2.11.8"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
