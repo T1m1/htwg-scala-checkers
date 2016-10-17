@@ -1,5 +1,5 @@
 package de.htwg.se.checkers.model
 
-case class Field(size: Int) {
+case class PlayField(size: Int) {
 
 }
