@@ -1,5 +1,5 @@
 package de.htwg.se.checkers.model
 
-case class Stone(var x: Int, var y: Int, var checkers: Boolean) {
+case class Stone(x: Int, y: Int, checkers: Boolean) {
 
 }
