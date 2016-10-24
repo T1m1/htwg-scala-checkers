@@ -2,10 +2,16 @@ package de.htwg.se.checkers.model
 
 import org.scalatest._
 
-class PieceSpec extends FlatSpec with Matchers {
+class PieceSpec extends WordSpec with Matchers {
 
+  "A new default Piece" should {
+    val x = 4
+    val y = 4
+    val piece = new Piece(x, y)
 
-  "A new default Piece" should "be not a checkers" in {
-    new Piece(1, 2).checkers should be(false)
+    "be not a checkers" in {
+      piece.checkers should be(false)
+    }
+
   }
 }
