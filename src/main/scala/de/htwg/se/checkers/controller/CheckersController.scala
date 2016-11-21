@@ -1,11 +1,19 @@
 package de.htwg.se.checkers.controller
 
+import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
+import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
+import de.htwg.se.checkers.Utils._
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, PlayField}
-import de.htwg.se.checkers.Utils._
 
-class CheckersController(var playfield: PlayField, val rows: Int) {
-  assert(playfield.size / 2 > rows, "Wrong number of initializing rows. Maximum allowed: " + ((playfield.size / 2) - 1))
+class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
+  // Inject
+  val rows = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
+  val size = injectOptional[Int](PlayfieldSize) getOrElse 2
+
+  assert(size / 2 > rows, "Wrong number of initializing rows. Maximum allowed: " + ((size / 2) - 1))
+
+  var playfield:PlayField = new PlayField(size)
 
   initPlayfield
 
