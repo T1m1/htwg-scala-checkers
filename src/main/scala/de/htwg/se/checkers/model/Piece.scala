@@ -1,7 +1,9 @@
 package de.htwg.se.checkers.model
 
-case class Piece(x: Int, y: Int, color: Int, checkers: Boolean) {
+import de.htwg.se.checkers.model.enumeration.Colour
 
-  def this(x: Int, y: Int, color: Int) = this(x, y, color, false)
+case class Piece(x: Int, y: Int, colour: Colour.Value , checkers: Boolean) {
+
+  def this(x: Int, y: Int, color: Colour.Value) = this(x, y, color, false)
 
 }

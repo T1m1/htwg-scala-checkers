@@ -1,9 +1,7 @@
 package de.htwg.se.checkers.view
 
 import de.htwg.se.checkers.controller.CheckersController
-import de.htwg.se.checkers.model.{Field, Piece, PlayField}
-
-import scala.math.sqrt
+import de.htwg.se.checkers.model.Field
 
 class Tui(controller: CheckersController) {
 
