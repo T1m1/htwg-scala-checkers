@@ -11,7 +11,8 @@ libraryDependencies ++= {
   val scalaMockV = "3.2.2"
   Seq(
     "org.scalatest" %% "scalatest" % scalaTestV % "test",
-    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockV % "test"
+    "org.scalamock" %% "scalamock-scalatest-support" % scalaMockV % "test",
+    "com.escalatesoft.subcut" %% "subcut" % "2.1"
   )
 }
 
