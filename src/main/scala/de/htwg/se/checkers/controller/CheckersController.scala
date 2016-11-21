@@ -20,22 +20,15 @@ class CheckersController(var playfield: PlayField, val rows: Int) {
 
 
     // set pieces for all player and return a copy of playfield
-    for (i <- 0 until rows) {
-      for (j <- playfield.board.indices) {
-        if ((i + j).isOdd) {
-          playfield = playfield.setPiece(i, j, new Piece(Colour.BLACK))
-        }
-      }
+    for {
+      i <- 0 until rows
+      j <- playfield.board.indices
+    } if ((i + j).isOdd) {
+      playfield = playfield.setPiece(i, j, new Piece(Colour.BLACK))
+    } else {
+      playfield = playfield.setPiece(playfield.board.length - i - 1, j, new Piece(Colour.WHITE))
     }
 
-    for (i <- 0 until rows) {
-      for (j <- playfield.board.indices) {
-        if ((i + 1 + j).isOdd) {
-          playfield = playfield.setPiece(playfield.board.length - 1 - i, j, new Piece(Colour.WHITE))
-        }
-      }
-    }
-    //playfield
   }
 
   // API
