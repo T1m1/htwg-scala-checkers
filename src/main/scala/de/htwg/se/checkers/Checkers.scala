@@ -1,7 +1,7 @@
 package de.htwg.se.checkers
 
 import de.htwg.se.checkers.controller.CheckersController
-import de.htwg.se.checkers.model.PlayField
+import de.htwg.se.checkers.model.Playfield
 import de.htwg.se.checkers.view.Tui
 
 object Checkers {
