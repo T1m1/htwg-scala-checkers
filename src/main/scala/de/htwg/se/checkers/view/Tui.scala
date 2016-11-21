@@ -20,6 +20,10 @@ class Tui(controller: CheckersController) {
         myPrint(controller.playfield.board)
       }
       case "p" => print("print possible moves")
+      case "n" => print("start new game")
+      case "m" => print("move piece")
+      case "a" => print("display all possible moves")
+      case "f" => print("display Playfield")
       case _ =>
     }
 

@@ -7,7 +7,7 @@ case class PlayField(board: Vector[Vector[Field]], size: Int) {
   def this(board: Vector[Vector[Field]]) = this(board, board.size)
 
   // constructor to create field with size
-  def this(size: Int) = this(Vector.tabulate(size, size) { (i, j) => new Field(i, j, (i + j) % 2 == 0) }, size)
+  def this(size: Int) = this(Vector.tabulate(size, size) { (i, j) => new Field(i, j) }, size)
 
   // only executed it is accessed the first time.
   lazy val numberOfRowsPerPlayer = calculateNumberOfRowsPerPlayer(board.length)
