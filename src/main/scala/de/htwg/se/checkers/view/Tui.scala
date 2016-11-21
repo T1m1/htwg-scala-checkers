@@ -2,7 +2,7 @@ package de.htwg.se.checkers.view
 
 import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{Field, Piece, PlayField}
+import de.htwg.se.checkers.model.{Field, Piece, Playfield}
 
 class Tui(controller: CheckersController) {
 
@@ -43,7 +43,7 @@ class Tui(controller: CheckersController) {
 
   }
 
-  def prettyPrint(field: Option[Piece]): String = field.map(x => pieceToString(x)).getOrElse("\u205F")
+  def prettyPrint(pieces: Option[Piece]): String = pieces.map(x => pieceToString(x)).getOrElse("\u205F")
 
   def pieceToString(piece: Piece): String = if (piece.colour == Colour.BLACK) "\u25CF" else "\u25CB"
 

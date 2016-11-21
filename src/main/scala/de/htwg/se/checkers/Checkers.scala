@@ -1,13 +1,13 @@
 package de.htwg.se.checkers
 
 import de.htwg.se.checkers.controller.CheckersController
-import de.htwg.se.checkers.model.PlayField
+import de.htwg.se.checkers.model.Playfield
 import de.htwg.se.checkers.view.Tui
 
 object Checkers {
 
   // TODO inject size of playfield
-  val playField = new PlayField(20)
+  val playField = new Playfield(20)
   val ctr = new CheckersController(playField, 9)
   val tui = new Tui(ctr)
 

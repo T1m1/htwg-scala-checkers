@@ -1,6 +1,6 @@
 package de.htwg.se.checkers
 
-import de.htwg.se.checkers.model.PlayField
+import de.htwg.se.checkers.model.Playfield
 
 /**
   * Created by steffen on 21/11/2016.
@@ -14,13 +14,14 @@ object Utils {
     def isOdd: Boolean = i % 2 == 1
   }
 
+
 }
 
 object CheckerRules {
 
-  implicit class rule(field: PlayField) {
+  implicit class rule(field: Playfield) {
 
-    //def correctPiece: Boolean = field.
+    def ensureCorrectRows(rows: Int): Boolean = rows > 0 && field.size / 2 > rows
 
   }
 
