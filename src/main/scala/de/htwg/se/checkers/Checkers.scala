@@ -8,7 +8,7 @@ object Checkers {
 
   // TODO inject size of playfield
   val playField = new PlayField(8)
-  val ctr = new CheckersController(playField, 2)
+  val ctr = new CheckersController(playField, 3)
   val tui = new Tui(ctr)
 
   def main(args: Array[String]): Unit = {
