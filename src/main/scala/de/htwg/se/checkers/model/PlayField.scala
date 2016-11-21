@@ -5,7 +5,10 @@ import de.htwg.se.checkers.model.enumeration.Colour
 
 case class PlayField(board: Vector[Vector[Option[Piece]]], size: Int) {
 
-  def setPiece(x: Int, y: Int, piece: Piece): PlayField = copy(board.updated(x, board(x).updated(y, Some(piece))))
+  def setPiece(x: Int, y: Int, piece: Piece): PlayField = {
+    // assert(true) TODO check if the piece has correct x y values
+    copy(board.updated(x, board(x).updated(y, Some(piece))))
+  }
 
   // constructor for default parameter size
   def this(board: Vector[Vector[Option[Piece]]]) = this(board, board.size)
