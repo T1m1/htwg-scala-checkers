@@ -11,4 +11,16 @@ class CheckersController(val playfield: PlayField) {
     // set pieces for all player and return a copy of playfield
     playfield
   }
+
+  // API
+
+  // new game
+
+  // move piece
+
+  // get playfield
+
+  // getAvailableMoves
+
+  //
 }

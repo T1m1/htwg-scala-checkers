@@ -1,8 +1,9 @@
 package de.htwg.se.checkers.model
 
-import scala.math.sqrt
-
 case class PlayField(board: Vector[Vector[Field]], size: Int) {
+
+  val ALPHABET = ('A' to 'Z').toArray
+
   // constructor for default parameter size
   def this(board: Vector[Vector[Field]]) = this(board, board.size)
 
@@ -12,12 +13,10 @@ case class PlayField(board: Vector[Vector[Field]], size: Int) {
   // only executed it is accessed the first time.
   lazy val numberOfRowsPerPlayer = calculateNumberOfRowsPerPlayer(board.length)
 
-  def calculateNumberOfRowsPerPlayer(number: Int): Int = {
-    if (number == 3) {
-      1
-    }
-    (Math.ceil(number / 2) - 0.5).toInt
-  }
+  def calculateNumberOfRowsPerPlayer(number: Int): Int = if (number == 3) 1 else (Math.ceil(number / 2) - 0.5).toInt
+
+  override def toString: String = board.zipWithIndex.map { case (row, j) => row.mkString(ALPHABET(j) + " [", ",", "]") }.mkString("\n")
+
 
   //def set(x: Int, y: Int, playable: Boolean): PlayField = copy(board.updated(x * size + y, new Field(x, y, playable)))
 }
