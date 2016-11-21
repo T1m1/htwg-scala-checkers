@@ -10,6 +10,8 @@ object Utils {
   implicit class betterInt(i: Int) {
 
     def isEven: Boolean = i % 2 == 0
+
+    def isOdd: Boolean = i % 2 == 1
   }
 
 }
@@ -21,4 +23,5 @@ object CheckerRules {
     //def correctPiece: Boolean = field.
 
   }
+
 }
