@@ -40,22 +40,25 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   }
 
-  def movePiece(origin: Coord, destiny: Coord): Unit = {
-    // check if move is possible
+  def movePiece(origin: Coord, target: Coord): Unit = {
+    // check if origin is correct
     require(isCorrectOrigin(origin))
+
+    // check if target is correct
+    require(isCorrectTarget(origin, target))
 
     // unset all pieces
     playfield = playfield.setPiece(origin, None)
 
     // set piece
-    playfield = playfield.setPiece(destiny, Some(new Piece(Colour.BLACK))) // TODO add logic
+    playfield = playfield.setPiece(target, Some(new Piece(Colour.BLACK))) // TODO add logic
 
 
   }
 
-  def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) &&
-    (playfield.possibleMoves contains position)
+  def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) && playfield.possibleMoves.contains(position)
 
+  def isCorrectTarget(origin: Coord, target: Coord): Boolean = playfield.listTargets(origin) contains target
 
   // API
 

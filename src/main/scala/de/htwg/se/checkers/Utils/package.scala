@@ -25,7 +25,9 @@ object CheckerRules {
     def ensureCorrectRows(rows: Int): Boolean = rows > 0 && field.size / 2 > rows
 
     // If you can take a piece, you have to. Each possible move is stored in this set
-    def possibleMoves(): Set[Coord] = Set(new Coord(1,1))
+    def possibleMoves(): Set[Coord] = Set(new Coord(1, 1))
+
+    def listTargets(origin: Coord): Set[Coord] = Set(new Coord(1, 1))
 
   }
 
