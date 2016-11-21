@@ -10,7 +10,7 @@ class CheckersController(var playfield: Playfield, val rows: Int) {
 
   initPlayfield
 
-  val currentPlayer = 0
+  val currentPlayer = Colour.BLACK
 
   /**
     * logic for initializing the playfield
@@ -43,6 +43,12 @@ class CheckersController(var playfield: Playfield, val rows: Int) {
 
   }
 
+  def isCorrectOrigin(origin: Coord, field: Playfield): Boolean = isCurrentPlayer(origin, field) && hasPossibleMoves(origin, field)
+
+  def isCurrentPlayer(origin: Coord, field: Playfield): Boolean = field.board(origin.x)(origin.y).exists(_.colour == currentPlayer)
+
+  def hasPossibleMoves(origin: Coord, field: Playfield): Boolean = field.possibleMoves contains origin
+
   // API
 
   // new game
@@ -55,3 +61,4 @@ class CheckersController(var playfield: Playfield, val rows: Int) {
 
   //
 }
+
