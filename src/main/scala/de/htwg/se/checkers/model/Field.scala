@@ -1,15 +1,10 @@
 package de.htwg.se.checkers.model
+import  de.htwg.se.checkers.Utils._
 
-case class Field(x: Int, y: Int) {
+case class Field(x: Int, y: Int, piece: Option[Piece]) {
 
-  def isPlayable: Boolean = (x + y) % 2 == 0
+  def this(x: Int, y: Int) = this(x, y, None)
 
-  def printBorder(value: String): String = {
-    if (isPlayable) {
-      "[" + value + "]"
-    } else {
-      "|||"
-    }
-  }
-
+  def isPlayable: Boolean = (x + y).isEven
+  
 }
