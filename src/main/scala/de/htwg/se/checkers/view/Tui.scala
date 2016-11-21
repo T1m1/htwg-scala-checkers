@@ -34,7 +34,7 @@ class Tui(controller: CheckersController) {
   }
 
 
-  def myPrint(board: Vector[Vector[Field]]): Unit = {
+  def myPrint(board: Vector[Vector[Option[Piece]]]): Unit = {
     println(raw"\  1  2  3  4  5  6  7  8")
 
     print(board.zipWithIndex.map {
@@ -43,7 +43,7 @@ class Tui(controller: CheckersController) {
 
   }
 
-  def prettyPrint(field: Field): String = field.piece.map(x => "|" + pieceToString(x) + "|").getOrElse("| |")
+  def prettyPrint(field: Option[Piece]): String = field.map(x => "|" + pieceToString(x) + "|").getOrElse("| |")
 
   def pieceToString(piece: Piece): String = if (piece.colour == Colour.BLACK) "\u25CF" else "\u25CB"
 
