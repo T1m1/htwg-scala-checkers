@@ -41,7 +41,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   }
 
   def movePiece(origin: Coord, destiny: Coord): Unit = {
-    // check if move is poosible
+    // check if move is possible
+    require(isCorrectOrigin(origin))
 
     // unset all pieces
     playfield = playfield.setPiece(origin, None)
@@ -52,11 +53,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   }
 
-  def isCorrectOrigin(origin: Coord, field: Playfield): Boolean = isCurrentPlayer(origin, field) && hasPossibleMoves(origin, field)
+  def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) &&
+    (playfield.possibleMoves contains position)
 
-  def isCurrentPlayer(origin: Coord, field: Playfield): Boolean = field.board(origin.x)(origin.y).exists(_.colour == currentPlayer)
-
-  def hasPossibleMoves(origin: Coord, field: Playfield): Boolean = field.possibleMoves contains origin
 
   // API
 
