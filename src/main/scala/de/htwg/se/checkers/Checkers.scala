@@ -7,8 +7,8 @@ import de.htwg.se.checkers.view.Tui
 object Checkers {
 
   // TODO inject size of playfield
-  val playField = new PlayField(10)
-  val ctr = new CheckersController(playField, 4)
+  val playField = new PlayField(20)
+  val ctr = new CheckersController(playField, 9)
   val tui = new Tui(ctr)
 
   def main(args: Array[String]): Unit = {
