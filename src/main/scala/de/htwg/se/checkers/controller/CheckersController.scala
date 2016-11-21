@@ -24,10 +24,22 @@ class CheckersController(var playfield: Playfield, val rows: Int) {
       i <- 0 until rows
       j <- playfield.board.indices
     } if ((i + j).isOdd) {
-      playfield = playfield.setPiece(new Coord(i, j), new Piece(Colour.BLACK))
+      playfield = playfield.setPiece(new Coord(i, j), Some(new Piece(Colour.BLACK)))
     } else {
-      playfield = playfield.setPiece(new Coord(playfield.board.length - i - 1, j), new Piece(Colour.WHITE))
+      playfield = playfield.setPiece(new Coord(playfield.board.length - i - 1, j), Some(new Piece(Colour.WHITE)))
     }
+
+  }
+
+  def movePiece(origin: Coord, destiny: Coord): Unit = {
+    // check if move is poosible
+
+    // unset all pieces
+    playfield = playfield.setPiece(origin, None)
+
+    // set piece
+    playfield = playfield.setPiece(destiny, Some(new Piece(Colour.BLACK))) // TODO add logic
+
 
   }
 

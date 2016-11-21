@@ -7,7 +7,7 @@ import de.htwg.se.checkers.model.Playfield
   */
 object Utils {
 
-  implicit class betterInt(i: Int) {
+  implicit class BetterInt(i: Int) {
 
     def isEven: Boolean = i % 2 == 0
 
@@ -19,7 +19,7 @@ object Utils {
 
 object CheckerRules {
 
-  implicit class rule(field: Playfield) {
+  implicit class Rule(field: Playfield) {
 
     def ensureCorrectRows(rows: Int): Boolean = rows > 0 && field.size / 2 > rows
 

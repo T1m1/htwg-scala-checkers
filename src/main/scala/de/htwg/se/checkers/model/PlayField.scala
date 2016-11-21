@@ -9,9 +9,9 @@ case class Playfield(board: Vector[Vector[Option[Piece]]], size: Int) {
   // constructor to create empty field with size
   def this(size: Int) = this(Vector.tabulate(size, size) { (i, j) => None }, size)
 
-  def setPiece(coord: Coord, piece: Piece): Playfield = {
+  def setPiece(coord: Coord, piece: Option[Piece]): Playfield = {
     // assert(true) TODO check if the piece has correct x y values
-    copy(board.updated(coord.x, board(coord.x).updated(coord.y, Some(piece))))
+    copy(board.updated(coord.x, board(coord.x).updated(coord.y, piece)))
   }
 
 
