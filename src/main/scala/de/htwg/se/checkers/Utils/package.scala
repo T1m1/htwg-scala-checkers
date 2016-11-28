@@ -1,5 +1,6 @@
 package de.htwg.se.checkers
 
+import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.{Coord, Playfield}
 
 /**
@@ -27,7 +28,10 @@ object CheckerRules {
     // If you can take a piece, you have to. Each possible move is stored in this set
     def possibleMoves(): Set[Coord] = Set(new Coord(1, 1))
 
-    def listTargets(origin: Coord): Set[Coord] = Set(new Coord(1, 1))
+    def listTargets(origin: Coord): Set[Coord] = field(origin).getOrElse() match {
+      case None => Set.empty
+
+    }
 
   }
 
