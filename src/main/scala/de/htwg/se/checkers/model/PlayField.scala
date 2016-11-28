@@ -20,13 +20,4 @@ case class Playfield(board: Vector[Vector[Option[Piece]]], size: Int) {
     copy(board.updated(coord._1, board(coord._1).updated(coord._2, piece)))
   }
 
-
-  // only executed it is accessed the first time.
-  lazy val numberOfRowsPerPlayer = calculateNumberOfRowsPerPlayer(board.length)
-
-  def calculateNumberOfRowsPerPlayer(number: Int): Int = if (number == 3) 1 else (Math.ceil(number / 2) - 0.5).toInt
-
-
-  //def set(x: Int, y: Int, playable: Boolean): PlayField = copy(board.updated(x * size + y, new Field(x, y, playable)))
-
 }
