@@ -1,6 +1,7 @@
 package de.htwg.se.checkers.view
 
 import de.htwg.se.checkers.controller.CheckersController
+import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Field, Piece, Playfield}
 
@@ -8,6 +9,22 @@ class Tui(controller: CheckersController) {
 
   val ALPHABET = ('A' to 'Z').toArray
 
+
+  def displayPossibleMoves(state: String) = {
+    val currentPlayer = controller.currentPlayer
+
+    state match {
+      case "s" => {
+        println(s"\n\nPlayer: $currentPlayer it is your turn!")
+        println(s"'p' -> print possble moves")
+        println(s"'n' -> start new game")
+        println(s"'q' -> quit game")
+        println(s"move pice syntax: 2B->1A ??")
+        println
+      }
+      case _ =>
+    }
+  }
 
   def processInputLine(input: String): Boolean = {
     var continue = true
@@ -18,13 +35,12 @@ class Tui(controller: CheckersController) {
       case "s" => {
         println("start game")
 
-        println(s"Player: $currentPlayer it is your turn!")
         myPrint(controller.playfield.board)
+        displayPossibleMoves("s")
       }
-      case "p" => print("print possible moves")
+      case "p" => println(controller.getPossibleMoves(Colour.WHITE))
       case "n" => print("start new game")
       case "m" => print("move piece")
-      case "a" => print("display all possible moves")
       case "f" => print("display Playfield")
       case _ =>
     }
