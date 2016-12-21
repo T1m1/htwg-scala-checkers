@@ -60,7 +60,22 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   }
 
+  def getPossibleMoves(color: Colour.Value): IndexedSeq[(Int, Int)] = {
+    for {
+      i <- playfield.board.indices
+      j <- 0 until rows
+      if getPossibleMoves(new Coord(i, j)).length > 0
+    } yield new Coord(i, j)
+  }
 
+  def getPossibleMoves(c: Coord): Array[Coord] = {
+    // search only if piece is on coordinate
+    if (playfield.board(c._1)(c._2).isDefined) {
+      recMoves(c._1 - 1, c._2 + 1, false, 1) ++ recMoves(c._1 + 1, c._2 + 1, true, 1)
+    } else {
+      Array.empty[Coord]
+    }
+  }
 
   def outOfBoard(i: Int, j: Int): Boolean = i >= size || j > size || i < 0 || j < 0
 
