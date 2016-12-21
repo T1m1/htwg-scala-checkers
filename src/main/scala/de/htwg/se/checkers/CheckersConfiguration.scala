@@ -2,7 +2,6 @@ package de.htwg.se.checkers
 
 import com.escalatesoft.subcut.inject._
 
-
 object BindingKeys {
   object PlayfieldSize extends BindingId
   object NumberOfPlayableRows extends BindingId

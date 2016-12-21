@@ -1,5 +1,7 @@
 package de.htwg.se.checkers.controller
 
+import java.awt.Color
+
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.CheckerRules._
@@ -7,6 +9,8 @@ import de.htwg.se.checkers.Utils._
 import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, Playfield}
+
+import scala.collection.immutable.IndexedSeq
 
 class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
   // Inject
@@ -31,8 +35,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
     // set pieces for all player
     for {
-      i <- 0 until rows
-      j <- playfield.board.indices
+      i <- playfield.board.indices
+      j <- 0 until rows
     } if ((i + j).isOdd) {
       playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
     } else {
@@ -48,12 +52,28 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     // check if target is correct
     assume(getTargets(origin) contains target)
 
-    // unset all pieces
+    // unset piece
     playfield = playfield.setPiece(origin, None)
 
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(Colour.BLACK)))
 
+  }
+
+
+
+  def recMoves(x: Int, y: Int, direction: Boolean, deep: Int): Array[Coord] = {
+    if (deep > 2) return Array.empty[Coord]
+    if (outOfBoard(x, y)) return Array.empty[Coord]
+    // if field free and on board
+    if (playfield.board(x)(y).isEmpty) return Array(new Coord(x, y))
+
+    // go left
+    if (direction) {
+      recMoves(x - 1, y + 1, direction, deep + 1)
+    } else {
+      recMoves(x + 1, y + 1, direction, deep + 1)
+    }
   }
 
   def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) && playfield.possibleMoves.contains(position)
@@ -66,11 +86,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   // new game
 
-  // move piece
-
   // get playfield
 
   // getAvailableMoves
-
-  //
 }
