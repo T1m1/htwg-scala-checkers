@@ -62,6 +62,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
 
 
+  def outOfBoard(i: Int, j: Int): Boolean = i >= size || j > size || i < 0 || j < 0
+
+
   def recMoves(x: Int, y: Int, direction: Boolean, deep: Int): Array[Coord] = {
     if (deep > 2) return Array.empty[Coord]
     if (outOfBoard(x, y)) return Array.empty[Coord]
