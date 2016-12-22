@@ -81,9 +81,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     // search only if piece is on coordinate
     if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(color)) {
       if (color.equals(Colour.BLACK)) {
-        recMoves(c._1 - 1, c._2 + 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, true, 1, color)
+        recMoves(c._1 - 1, c._2 + 1, Direction.LEFT, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, Direction.RIGHT, 1, color)
       } else {
-        recMoves(c._1 - 1, c._2 - 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, true, 1, color)
+        recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1, color)
       }
     } else {
       Array.empty[Coord]
@@ -92,11 +92,11 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def outOfBoard(i: Int, j: Int): Boolean = i >= size || j >= size || i < 0 || j < 0
 
-  def newPositionX(x: Integer, direction: Boolean): Integer = if (direction) x - 1 else x + 1
+  def newPositionX(x: Integer, direction: Direction.Value): Integer = if (direction.equals(Direction.LEFT)) x - 1 else x + 1
 
   def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
 
-  def recMoves(x: Int, y: Int, direction: Boolean, deep: Int, colour: Colour.Value): Array[Coord] = {
+  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int, colour: Colour.Value): Array[Coord] = {
     if (deep > 2) return Array.empty[Coord]
     if (outOfBoard(x, y)) return Array.empty[Coord]
     // if field free and on board
