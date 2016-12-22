@@ -6,7 +6,7 @@ import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.CheckerRules._
 import de.htwg.se.checkers.Utils._
-import de.htwg.se.checkers.model.api.Coord
+import de.htwg.se.checkers.model.api.{Coord, Move}
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
@@ -52,7 +52,6 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     playfield = playfield.setPiece(origin, None)
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(Colour.BLACK)))
-
   }
 
   def getPossiblePieces(color: Colour.Value): IndexedSeq[(Int, Int)] = {
@@ -63,11 +62,12 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     } yield new Coord(i, j)
   }
 
-  def getPossibleMoves(color: Colour.Value): IndexedSeq[Array[(Int, Int)]] = {
+  def getPossibleMoves(color: Colour.Value): IndexedSeq[((Int, Int), (Int, Int))] = {
     for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-    } yield getPossibleMoves(new Coord(i, j), color)
+      moves <- getPossibleMoves(new Coord(i, j), color)
+    } yield new Move((i, j), moves)
   }
 
   def getPossibleMoves(c: Coord, color: Colour.Value): Array[Coord] = {
@@ -109,12 +109,4 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   def isCorrectTarget(origin: Coord, target: Coord): Boolean = playfield.listTargets(origin) contains target
 
   def getTargets(origin: Coord): Set[Coord] = playfield.listTargets(origin)
-
-  // API
-
-  // new game
-
-  // get playfield
-
-  // getAvailableMoves
 }
