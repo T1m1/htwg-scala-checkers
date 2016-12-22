@@ -38,7 +38,10 @@ class Tui(controller: CheckersController) {
         myPrint(controller.playfield.board)
         displayPossibleMoves("s")
       }
-      case "p" => println(controller.getPossibleMoves(Colour.WHITE))
+      case "p" => {
+        println(controller.getPossibleMoves(Colour.WHITE))
+        println(controller.getPossibleMoves(Colour.BLACK))
+      }
       case "n" => print("start new game")
       case "m" => print("move piece")
       case "f" => print("display Playfield")

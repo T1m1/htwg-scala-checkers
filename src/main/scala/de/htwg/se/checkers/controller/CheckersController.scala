@@ -40,7 +40,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     } if ((i + j).isOdd) {
       playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
     } else {
-      playfield = playfield.setPiece((playfield.board.length - i - 1, j), Some(new Piece(Colour.WHITE)))
+      playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
     }
 
   }
@@ -63,24 +63,26 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   def getPossibleMoves(color: Colour.Value): IndexedSeq[(Int, Int)] = {
     for {
       i <- playfield.board.indices
-      j <- 0 until rows
-      if getPossibleMoves(new Coord(i, j)).length > 0
+      j <- playfield.board(i).indices
+      if getPossibleMoves(new Coord(i, j), color).length > 0
     } yield new Coord(i, j)
   }
 
-  def getPossibleMoves(c: Coord): Array[Coord] = {
+  def getPossibleMoves(c: Coord, color: Colour.Value): Array[Coord] = {
     // search only if piece is on coordinate
-    if (playfield.board(c._1)(c._2).isDefined) {
-      recMoves(c._1 - 1, c._2 + 1, false, 1) ++ recMoves(c._1 + 1, c._2 + 1, true, 1)
+    if (playfield.board(c._1)(c._2).isDefined && color.equals(Colour.BLACK)) {
+      recMoves(c._1 - 1, c._2 + 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, true, 1, color)
+    } else if (playfield.board(c._1)(c._2).isDefined && color.equals(Colour.WHITE)) {
+      recMoves(c._1 - 1, c._2 - 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, true, 1, color)
     } else {
       Array.empty[Coord]
     }
   }
 
-  def outOfBoard(i: Int, j: Int): Boolean = i >= size || j > size || i < 0 || j < 0
+  def outOfBoard(i: Int, j: Int): Boolean = i >= size || j >= size || i < 0 || j < 0
 
 
-  def recMoves(x: Int, y: Int, direction: Boolean, deep: Int): Array[Coord] = {
+  def recMoves(x: Int, y: Int, direction: Boolean, deep: Int, colour: Colour.Value): Array[Coord] = {
     if (deep > 2) return Array.empty[Coord]
     if (outOfBoard(x, y)) return Array.empty[Coord]
     // if field free and on board
@@ -88,9 +90,19 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
     // go left
     if (direction) {
-      recMoves(x - 1, y + 1, direction, deep + 1)
+      if (colour.equals(Colour.BLACK)) {
+        recMoves(x - 1, y + 1, direction, deep + 1, colour)
+      } else {
+        recMoves(x - 1, y - 1, direction, deep + 1, colour)
+      }
     } else {
-      recMoves(x + 1, y + 1, direction, deep + 1)
+      if (colour.equals(Colour.BLACK)) {
+        recMoves(x + 1, y + 1, direction, deep + 1, colour)
+      } else {
+        recMoves(x + 1, y - 1, direction, deep + 1, colour)
+
+      }
+
     }
   }
 
