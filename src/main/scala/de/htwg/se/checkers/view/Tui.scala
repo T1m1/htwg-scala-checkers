@@ -90,5 +90,10 @@ class Tui(controller: CheckersController) {
 
   def movePieceByInput(input: String) = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(m))
 
-  def parseGroupsAndMove(m: Match): Unit = controller.movePiece(new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0))), new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0))))
+  def parseGroupsAndMove(m: Match): Unit = {
+    val origin = new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0)))
+    val target = new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0)))
+    // move piece if it a possible move
+    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controller.movePiece(origin, target) else println("--- Move not possible! ---")
+  }
 }
