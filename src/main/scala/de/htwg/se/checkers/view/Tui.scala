@@ -10,7 +10,7 @@ import scala.util.matching.Regex.Match
 class Tui(controller: CheckersController) {
 
   val ALPHABET = ('A' to 'Z').toArray
-  val Move = "\\[([A-Z])([0-9])\\-\\>([A-Z])([0-9])\\]".r
+  val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
 
 
   def displayPossibleMoves(state: String) = {
@@ -25,7 +25,7 @@ class Tui(controller: CheckersController) {
              |'m' -> print possble moves
              |'n' -> start new game
              |'q' -> quit game
-             |move pice syntax: [B2->A3]""".stripMargin)
+             |move pice syntax: B2-A3""".stripMargin)
       }
       case _ =>
     }
@@ -56,7 +56,7 @@ class Tui(controller: CheckersController) {
         movePieceByInput(input)
         myPrint(controller.playfield.board)
         displayPossibleMoves("s")
-      case _ =>
+      case _ => println("invalid input")
     }
 
     println
@@ -84,7 +84,7 @@ class Tui(controller: CheckersController) {
 
   def printPossiblePieces(piece: (Int, Int)): Unit = print("(" + getCoordinate(piece) + ")")
 
-  def printPossibleMoves(move: ((Int, Int), (Int, Int))): Unit = print("[" + getCoordinate(move._1) + "->" + getCoordinate(move._2) + "]")
+  def printPossibleMoves(move: ((Int, Int), (Int, Int))): Unit = print(getCoordinate(move._1) + "-" + getCoordinate(move._2) + " ")
 
   def getCoordinate(coordinate: (Int, Int)): String = ALPHABET(coordinate._2) + "" + coordinate._1
 
