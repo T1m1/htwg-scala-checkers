@@ -17,10 +17,11 @@ class Tui(controller: CheckersController) {
         println(
           s"""
              |\nPlayer: $currentPlayer it is your turn!
-             |'p' -> print possble moves
+             |'p' -> print movable pieces
+             |'m' -> print possble moves
              |'n' -> start new game
              |'q' -> quit game
-             |move pice syntax: 2B->1A ??""".stripMargin)
+             |move pice syntax: [B2->A3]""".stripMargin)
       }
       case _ =>
     }
@@ -59,7 +60,15 @@ class Tui(controller: CheckersController) {
 
   def myPrint(board: Vector[Vector[Option[Piece]]]): Unit = {
     print(board.indices.map(i => (i + 1) + "\u205F").mkString("\\\u205F ", "", "\n"))
-    print(board.zipWithIndex.map {
+
+    // rotate board to display correct view
+    val switchedBoard = for {
+      i <- board.indices
+    } yield for {
+      j <- board.indices
+    } yield (board(j)(i))
+
+    print(switchedBoard.zipWithIndex.map {
       case (row, index) => row.map(prettyPrint).mkString(ALPHABET(index) + " |", "|", "|")
     }.mkString("\n"))
   }
