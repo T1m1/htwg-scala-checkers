@@ -32,7 +32,6 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     * @return
     */
   def initPlayfield: Unit = {
-
     // set pieces for all player
     for {
       i <- playfield.board.indices
@@ -42,25 +41,21 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     } else {
       playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
     }
-
   }
 
   def movePiece(origin: Coord, target: Coord): Unit = {
     // check if origin is correct
     assume(isCorrectOrigin(origin))
-
     // check if target is correct
     assume(getTargets(origin) contains target)
-
     // unset piece
     playfield = playfield.setPiece(origin, None)
-
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(Colour.BLACK)))
 
   }
 
-  def getPossibleMoves(color: Colour.Value): IndexedSeq[(Int, Int)] = {
+  def getPossiblePieces(color: Colour.Value): IndexedSeq[(Int, Int)] = {
     for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
@@ -68,12 +63,21 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     } yield new Coord(i, j)
   }
 
+  def getPossibleMoves(color: Colour.Value): IndexedSeq[Array[(Int, Int)]] = {
+    for {
+      i <- playfield.board.indices
+      j <- playfield.board(i).indices
+    } yield getPossibleMoves(new Coord(i, j), color)
+  }
+
   def getPossibleMoves(c: Coord, color: Colour.Value): Array[Coord] = {
     // search only if piece is on coordinate
-    if (playfield.board(c._1)(c._2).isDefined && color.equals(Colour.BLACK)) {
-      recMoves(c._1 - 1, c._2 + 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, true, 1, color)
-    } else if (playfield.board(c._1)(c._2).isDefined && color.equals(Colour.WHITE)) {
-      recMoves(c._1 - 1, c._2 - 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, true, 1, color)
+    if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(color)) {
+      if (color.equals(Colour.BLACK)) {
+        recMoves(c._1 - 1, c._2 + 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, true, 1, color)
+      } else {
+        recMoves(c._1 - 1, c._2 - 1, false, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, true, 1, color)
+      }
     } else {
       Array.empty[Coord]
     }
@@ -81,29 +85,23 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def outOfBoard(i: Int, j: Int): Boolean = i >= size || j >= size || i < 0 || j < 0
 
+  def newPositionX(x: Integer, direction: Boolean): Integer = if (direction) x - 1 else x + 1
+
+  def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
 
   def recMoves(x: Int, y: Int, direction: Boolean, deep: Int, colour: Colour.Value): Array[Coord] = {
     if (deep > 2) return Array.empty[Coord]
     if (outOfBoard(x, y)) return Array.empty[Coord]
     // if field free and on board
     if (playfield.board(x)(y).isEmpty) return Array(new Coord(x, y))
+    // if same color at position, it is not possible to move the piece
+    if (playfield.board(x)(y).isDefined && playfield.board(x)(y).get.colour.equals(colour)) return Array.empty[Coord]
 
-    // go left
-    if (direction) {
-      if (colour.equals(Colour.BLACK)) {
-        recMoves(x - 1, y + 1, direction, deep + 1, colour)
-      } else {
-        recMoves(x - 1, y - 1, direction, deep + 1, colour)
-      }
-    } else {
-      if (colour.equals(Colour.BLACK)) {
-        recMoves(x + 1, y + 1, direction, deep + 1, colour)
-      } else {
-        recMoves(x + 1, y - 1, direction, deep + 1, colour)
+    val newX = newPositionX(x, direction)
+    val newY = newPositionY(y, colour)
 
-      }
-
-    }
+    // recursiveMove
+    recMoves(newX, newY, direction, deep + 1, colour)
   }
 
   def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) && playfield.possibleMoves.contains(position)

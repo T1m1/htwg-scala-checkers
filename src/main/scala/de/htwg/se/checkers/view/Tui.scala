@@ -9,18 +9,18 @@ class Tui(controller: CheckersController) {
 
   val ALPHABET = ('A' to 'Z').toArray
 
-
   def displayPossibleMoves(state: String) = {
     val currentPlayer = controller.currentPlayer
 
     state match {
       case "s" => {
-        println(s"\n\nPlayer: $currentPlayer it is your turn!")
-        println(s"'p' -> print possble moves")
-        println(s"'n' -> start new game")
-        println(s"'q' -> quit game")
-        println(s"move pice syntax: 2B->1A ??")
-        println
+        println(
+          s"""
+             |\nPlayer: $currentPlayer it is your turn!
+             |'p' -> print possble moves
+             |'n' -> start new game
+             |'q' -> quit game
+             |move pice syntax: 2B->1A ??""".stripMargin)
       }
       case _ =>
     }
@@ -38,13 +38,17 @@ class Tui(controller: CheckersController) {
         myPrint(controller.playfield.board)
         displayPossibleMoves("s")
       }
+      // TODO print possible moves - debug version
       case "p" => {
-        println(controller.getPossibleMoves(Colour.WHITE))
-        println(controller.getPossibleMoves(Colour.BLACK))
+        println("Possible pieces: " + controller.getPossiblePieces(Colour.WHITE).foreach(e => print(e)))
+        println(controller.getPossiblePieces(Colour.BLACK).foreach(e => print(e)))
+        println("Possible Moves: " +controller.getPossibleMoves(Colour.BLACK).foreach(e => e.foreach(a => print(a))))
+        println(controller.getPossibleMoves(Colour.WHITE).foreach(e => e.foreach(a => print(a))))
       }
       case "n" => print("start new game")
       case "m" => print("move piece")
-      case "f" => print("display Playfield")
+      // print field
+      case "f" => myPrint(controller.playfield.board)
       case _ =>
     }
 
@@ -55,11 +59,9 @@ class Tui(controller: CheckersController) {
 
   def myPrint(board: Vector[Vector[Option[Piece]]]): Unit = {
     print(board.indices.map(i => (i + 1) + "\u205F").mkString("\\\u205F ", "", "\n"))
-
     print(board.zipWithIndex.map {
       case (row, index) => row.map(prettyPrint).mkString(ALPHABET(index) + " |", "|", "|")
     }.mkString("\n"))
-
   }
 
   def prettyPrint(pieces: Option[Piece]): String = pieces.map(x => pieceToString(x)).getOrElse("\u205F")
