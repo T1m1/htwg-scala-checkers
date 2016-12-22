@@ -27,27 +27,31 @@ class Tui(controller: CheckersController) {
     }
   }
 
+  def printPossiblePieces(piece: (Int, Int)): Unit = print("(" + getCoordinate(piece) + ")")
+
+  def printPossibleMoves(move: ((Int, Int), (Int, Int))): Unit = print("[" + getCoordinate(move._1) + "->" + getCoordinate(move._2) + "]")
+
+  def getCoordinate(coordinate: (Int, Int)): String = ALPHABET(coordinate._2) + "" + coordinate._1
+
   def processInputLine(input: String): Boolean = {
     var continue = true
     val currentPlayer = controller.currentPlayer
 
     input match {
       case "q" => continue = false
-      case "s" => {
+      case "s" =>
         println("start game")
-
         myPrint(controller.playfield.board)
         displayPossibleMoves("s")
-      }
-      // TODO print possible moves - debug version
-      case "p" => {
-        println("Possible pieces: " + controller.getPossiblePieces(Colour.WHITE).foreach(e => print(e)))
-        println(controller.getPossiblePieces(Colour.BLACK).foreach(e => print(e)))
-        println("Possible Moves: " +controller.getPossibleMoves(Colour.BLACK).foreach(e => e.foreach(a => print(a))))
-        println(controller.getPossibleMoves(Colour.WHITE).foreach(e => e.foreach(a => print(a))))
-      }
+      case "p" =>
+        // print movable pieces
+        controller.getPossiblePieces(controller.currentPlayer).foreach(piece => printPossiblePieces(piece))
+        println("\nYour turn: ")
       case "n" => print("start new game")
-      case "m" => print("move piece")
+      case "m" =>
+        // print possible moves
+        controller.getPossibleMoves(controller.currentPlayer).foreach(move => printPossibleMoves(move))
+        println("\nYour turn: ")
       // print field
       case "f" => myPrint(controller.playfield.board)
       case _ =>
@@ -66,7 +70,7 @@ class Tui(controller: CheckersController) {
       i <- board.indices
     } yield for {
       j <- board.indices
-    } yield (board(j)(i))
+    } yield board(j)(i)
 
     print(switchedBoard.zipWithIndex.map {
       case (row, index) => row.map(prettyPrint).mkString(ALPHABET(index) + " |", "|", "|")
