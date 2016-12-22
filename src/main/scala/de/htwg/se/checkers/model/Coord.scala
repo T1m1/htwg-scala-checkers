@@ -6,6 +6,8 @@ import de.htwg.se.checkers.model.enumeration.Direction
 
 package object api {
   type Coord = (Int, Int)
+  type Move = ((Int, Int), (Int, Int))
+
 }
 
 object CoordUtil {
