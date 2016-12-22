@@ -8,6 +8,7 @@ import de.htwg.se.checkers.model.{Field, Piece, Playfield}
 class Tui(controller: CheckersController) {
 
   val ALPHABET = ('A' to 'Z').toArray
+  val Move = "\\[[A-Z][0-9]\\-\\>[A-Z][0-9]\\]".r
 
   def displayPossibleMoves(state: String) = {
     val currentPlayer = controller.currentPlayer
@@ -54,6 +55,7 @@ class Tui(controller: CheckersController) {
         println("\nYour turn: ")
       // print field
       case "f" => myPrint(controller.playfield.board)
+      case Move(_*) => print("DO MOVE:" + input)
       case _ =>
     }
 
