@@ -7,7 +7,7 @@ import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.CheckerRules._
 import de.htwg.se.checkers.Utils._
 import de.htwg.se.checkers.model.api.{Coord, Move}
-import de.htwg.se.checkers.model.enumeration.Colour
+import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
 import scala.collection.immutable.IndexedSeq
@@ -24,7 +24,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   initPlayfield
 
-  val currentPlayer = Colour.BLACK
+  var currentPlayer = Colour.BLACK
 
   /**
     * logic for initializing the playfield
@@ -43,6 +43,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
   }
 
+  // not immutable!
+  def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
+
   def movePiece(origin: Coord, target: Coord): Unit = {
     // check if origin is correct
     //    assume(isCorrectOrigin(origin)) TODO @Steffen please fix your code
@@ -54,7 +57,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     //TODO check if piece is capture -> remove captured element
 
     // set piece
-    playfield = playfield.setPiece(target, Some(new Piece(Colour.BLACK)))
+    playfield = playfield.setPiece(target, Some(new Piece(currentPlayer)))
+    nextPlayer
   }
 
   def getPossiblePieces(color: Colour.Value): IndexedSeq[(Int, Int)] = {
