@@ -1,19 +1,23 @@
 package de.htwg.se.checkers.view
 
-import de.htwg.se.checkers.controller.CheckersController
+import akka.actor.{Actor, ActorRef}
+import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
+import de.htwg.se.checkers.controller.{CheckersController, CreateUI, RegisterUI, UpdateUI}
+import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{Field, Piece, Playfield}
 
+import scala.io.StdIn
 import scala.util.matching.Regex.Match
 
-class Tui(controller: CheckersController) {
+class Tui(controllerActor: ActorRef) extends Actor {
+  controllerActor ! RegisterUI
 
   val ALPHABET = ('A' to 'Z').toArray
   val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
 
 
-  def displayPossibleMoves(state: String) = {
+  def displayPossibleMoves(controller: CheckersController, state: String) = {
     val currentPlayer = controller.currentPlayer
 
     state match {
@@ -25,13 +29,15 @@ class Tui(controller: CheckersController) {
              |'m' -> print possble moves
              |'n' -> start new game
              |'q' -> quit game
-             |move pice syntax: B2-A3""".stripMargin)
+             |move pice syntax: B2-A3
+             |
+             |your turn: """.stripMargin)
       }
       case _ =>
     }
   }
 
-  def processInputLine(input: String): Boolean = {
+  def processInputLine(controller: CheckersController, input: String): Boolean = {
     var continue = true
     val currentPlayer = controller.currentPlayer
 
@@ -39,24 +45,22 @@ class Tui(controller: CheckersController) {
       case "q" => continue = false
       case "s" =>
         println("start game")
-        myPrint(controller.playfield.board)
-        displayPossibleMoves("s")
+        controllerActor ! PrintInfo
       case "p" =>
         // print movable pieces
         controller.getPossiblePieces(controller.currentPlayer).foreach(piece => printPossiblePieces(piece))
         println("\nYour turn: ")
+        controllerActor ! PrintInfo
       case "n" => print("start new game")
       case "m" =>
         // print possible moves
         controller.getPossibleMoves(controller.currentPlayer).foreach(move => printPossibleMoves(move))
-        println("\nYour turn: ")
+
+        controllerActor ! PrintInfo
       // print field
       case "f" => myPrint(controller.playfield.board)
-      case Move(_*) =>
-        movePieceByInput(input)
-        myPrint(controller.playfield.board)
-        displayPossibleMoves("s")
-      case _ => println("invalid input")
+      case Move(_*) => movePieceByInput(controller, input)
+      case _ => println("invalid input\n"); controllerActor ! PrintInfo
     }
 
     println
@@ -88,12 +92,22 @@ class Tui(controller: CheckersController) {
 
   def getCoordinate(coordinate: (Int, Int)): String = ALPHABET(coordinate._2) + "" + coordinate._1
 
-  def movePieceByInput(input: String) = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(m))
+  def movePieceByInput(controller: CheckersController, input: String) = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(controller, m))
 
-  def parseGroupsAndMove(m: Match): Unit = {
+  def parseGroupsAndMove(controller: CheckersController, m: Match): Unit = {
     val origin = new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0)))
     val target = new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0)))
     // move piece if it a possible move
-    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controller.movePiece(origin, target) else println("--- Move not possible! ---")
+    //   if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controller.movePiece(origin, target) else println("--- Move not possible! ---")
+    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controllerActor ! SetPiece(origin, target) else println("--- Move not possible! ---")
+  }
+
+  override def receive: Receive = {
+    case infos: UpdateUI => {
+      myPrint(infos.controller.playfield.board)
+      displayPossibleMoves(infos.controller, "s")
+      processInputLine(infos.controller, StdIn.readLine())
+    }
+    case infos: CreateUI => processInputLine(infos.controller, "s")
   }
 }
