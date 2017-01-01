@@ -1,11 +1,10 @@
 package de.htwg.se.checkers.controller
 
-import java.awt.Color
-
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.CheckerRules._
 import de.htwg.se.checkers.Utils._
+import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.model.api.{Coord, Move}
 import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import de.htwg.se.checkers.model.{Piece, Playfield}
@@ -28,8 +27,6 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   /**
     * logic for initializing the playfield
-    *
-    * @return
     */
   def initPlayfield: Unit = {
     // set pieces for all player
@@ -117,4 +114,13 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   def isCorrectTarget(origin: Coord, target: Coord): Boolean = playfield.listTargets(origin) contains target
 
   def getTargets(origin: Coord): Set[Coord] = playfield.listTargets(origin)
+
+  def handleCommand(command: Command): Boolean = {
+    command match {
+      case QuitGame() => false
+      case SetPiece(start, end) => movePiece(start, end); true
+      case PrintInfo() => true
+      case _ => true
+    }
+  }
 }
