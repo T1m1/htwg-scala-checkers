@@ -17,23 +17,17 @@ class ControllerActor() extends Actor {
   val userInterfaces = new ListBuffer[ActorRef]()
 
   override def receive: Receive = {
-    case RegisterUI => userInterfaces += sender(); sender() ! createUI()
+    case RegisterUI => userInterfaces += sender(); sender() ! createUpdateUI()
     case DeregisterUI => userInterfaces -= sender()
-    case PrintInfo => userInterfaces.foreach(_ ! updateUI())
+    case PrintInfo => userInterfaces.foreach(_ ! createUpdateUI())
     case command: Command => controller.handleCommand(command) match {
-      case true => userInterfaces.foreach(_ ! updateUI())
+      case true => userInterfaces.foreach(_ ! createUpdateUI())
     }
   }
 
-  private def updateUI() = {
-    UpdateUI(controller)
-  }
-
-  private def createUI() = {
-    CreateUI(controller)
+  private def createUpdateUI() = {
+    CreateUpdateUI(controller)
   }
 }
 
-case class UpdateUI(controller: CheckersController)
-
-case class CreateUI(controller: CheckersController)
+case class CreateUpdateUI(controller: CheckersController)

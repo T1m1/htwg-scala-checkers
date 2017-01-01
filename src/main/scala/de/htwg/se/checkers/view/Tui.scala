@@ -2,7 +2,7 @@ package de.htwg.se.checkers.view
 
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, CreateUI, RegisterUI, UpdateUI}
+import de.htwg.se.checkers.controller.{CheckersController, RegisterUI, CreateUpdateUI}
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
@@ -27,6 +27,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
              |\nPlayer: $currentPlayer it is your turn!
              |'p' -> print movable pieces
              |'m' -> print possble moves
+             |'f' -> print playfield
              |'n' -> start new game
              |'q' -> quit game
              |move pice syntax: B2-A3
@@ -51,14 +52,12 @@ class Tui(controllerActor: ActorRef) extends Actor {
         controller.getPossiblePieces(controller.currentPlayer).foreach(piece => printPossiblePieces(piece))
         println("\nYour turn: ")
         controllerActor ! PrintInfo
-      case "n" => print("start new game")
+      case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
         controller.getPossibleMoves(controller.currentPlayer).foreach(move => printPossibleMoves(move))
-
         controllerActor ! PrintInfo
-      // print field
-      case "f" => myPrint(controller.playfield.board)
+      case "f" => controllerActor ! PrintInfo
       case Move(_*) => movePieceByInput(controller, input)
       case _ => println("invalid input\n"); controllerActor ! PrintInfo
     }
@@ -102,11 +101,10 @@ class Tui(controllerActor: ActorRef) extends Actor {
   }
 
   override def receive: Receive = {
-    case infos: UpdateUI => {
+    case infos: CreateUpdateUI => {
       myPrint(infos.controller.playfield.board)
       displayPossibleMoves(infos.controller, "s")
       processInputLine(infos.controller, StdIn.readLine())
     }
-    case infos: CreateUI => processInputLine(infos.controller, "s")
   }
 }
