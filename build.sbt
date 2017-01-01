@@ -5,6 +5,7 @@ scalaVersion := "2.11.8"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")
 
 resolvers += Resolver.jcenterRepo
+resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
 
 libraryDependencies ++= {
   val scalaTestV = "3.0.0-M15"
@@ -15,5 +16,7 @@ libraryDependencies ++= {
     "com.escalatesoft.subcut" %% "subcut" % "2.1"
   )
 }
+
+libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4-SNAPSHOT"
 
 fork in run := true
