@@ -52,7 +52,11 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     playfield = playfield.setPiece(origin, None)
 
     //check if piece is capture -> remove captured element
-    if ((math.abs(origin._1 - target._1) == 2) && (Math.abs(origin._2 - target._2) == 2)) playfield = playfield.setPiece(new Coord(target._1 - 1, target._2 - 1), None)
+    if ((math.abs(origin._1 - target._1) == 2) && (Math.abs(origin._2 - target._2) == 2)) {
+      val x = if (currentPlayer.equals(Colour.BLACK)) target._1 + 1 else target._1 - 1
+      val y = if (target._2 > origin._2) target._2 - 1 else target._2 + 1
+      playfield = playfield.setPiece(new Coord(x, y), None)
+    }
 
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(currentPlayer)))
