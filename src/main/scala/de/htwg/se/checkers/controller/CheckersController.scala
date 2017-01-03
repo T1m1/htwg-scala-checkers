@@ -5,7 +5,7 @@ import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.CheckerRules._
 import de.htwg.se.checkers.Utils._
 import de.htwg.se.checkers.controller.command._
-import de.htwg.se.checkers.model.api.{Coord, Move}
+import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
@@ -68,14 +68,24 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   }
 
   def getPossibleMoves(color: Colour.Value): IndexedSeq[((Int, Int), (Int, Int))] = {
-    for {
+    val moves = for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
       moves <- getPossibleMoves(new Coord(i, j), color)
-    } yield new Move((i, j), moves)
+    } yield new MoveCheck((i, j), moves._1, moves._2)
+
+
+    val captures = for {
+      i <- moves
+      if i._3.equals(true)
+    } yield new Move(i._1, i._2)
+
+    if (captures.nonEmpty) return captures
+    // transform to move
+    for (i <- moves) yield new Move(i._1, i._2)
   }
 
-  def getPossibleMoves(c: Coord, color: Colour.Value): Array[Coord] = {
+  def getPossibleMoves(c: Coord, color: Colour.Value): Array[CoordStep] = {
     // search only if piece is on coordinate
     if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(color)) {
       if (color.equals(Colour.BLACK)) {
@@ -84,7 +94,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
         recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1, color)
       }
     } else {
-      Array.empty[Coord]
+      Array.empty[CoordStep]
     }
   }
 
@@ -94,13 +104,13 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
 
-  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int, colour: Colour.Value): Array[Coord] = {
-    if (deep > 2) return Array.empty[Coord]
-    if (outOfBoard(x, y)) return Array.empty[Coord]
+  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int, colour: Colour.Value): Array[CoordStep] = {
+    if (deep > 2) return Array.empty[CoordStep]
+    if (outOfBoard(x, y)) return Array.empty[CoordStep]
     // if field free and on board
-    if (playfield.board(x)(y).isEmpty) return Array(new Coord(x, y))
+    if (playfield.board(x)(y).isEmpty) if (deep == 2) return Array(new CoordStep((x, y), true)) else return Array(new CoordStep((x, y), false))
     // if same color at position, it is not possible to move the piece
-    if (playfield.board(x)(y).isDefined && playfield.board(x)(y).get.colour.equals(colour)) return Array.empty[Coord]
+    if (playfield.board(x)(y).isDefined && playfield.board(x)(y).get.colour.equals(colour)) return Array.empty[CoordStep]
 
     val newX = newPositionX(x, direction)
     val newY = newPositionY(y, colour)
