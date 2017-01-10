@@ -13,8 +13,8 @@ import scala.collection.immutable.IndexedSeq
 
 class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
   // Inject
-  val rows = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
-  val size = injectOptional[Int](PlayfieldSize) getOrElse 2
+  val rows: Int = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
+  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 2
 
   var playfield: Playfield = new Playfield(size)
 
@@ -45,7 +45,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def movePiece(origin: Coord, target: Coord): Unit = {
     // assert correct move
-    assume(isCorrectMove(origin, target)) // TODO @Steffen please fix your code
+    assume(isCorrectMove(origin, target))
 
     // unset piece
     playfield = playfield.setPiece(origin, None)

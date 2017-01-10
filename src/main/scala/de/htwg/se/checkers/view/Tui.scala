@@ -2,19 +2,20 @@ package de.htwg.se.checkers.view
 
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, RegisterUI, CreateUpdateUI}
+import de.htwg.se.checkers.controller.{CheckersController, CreateUpdateUI, RegisterUI}
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.io.StdIn
+import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
 class Tui(controllerActor: ActorRef) extends Actor {
   controllerActor ! RegisterUI
 
-  val ALPHABET = ('A' to 'Z').toArray
-  val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
+  val ALPHABET: Array[Char] = ('A' to 'Z').toArray
+  val Move: Regex = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
 
 
   def displayPossibleMoves(controller: CheckersController, state: String): Unit = {
@@ -26,11 +27,11 @@ class Tui(controllerActor: ActorRef) extends Actor {
           s"""
              |\nPlayer: $currentPlayer it is your turn!
              |'p' -> print movable pieces
-             |'m' -> print possble moves
+             |'m' -> print possible moves
              |'f' -> print playfield
              |'n' -> start new game
              |'q' -> quit game
-             |move pice syntax: B2-A3
+             |move piece syntax: B2-A3
              |
              |your turn: """.stripMargin)
       }
@@ -96,8 +97,9 @@ class Tui(controllerActor: ActorRef) extends Actor {
   def parseGroupsAndMove(controller: CheckersController, m: Match): Unit = {
     val origin = new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0)))
     val target = new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0)))
-    // move piece if it a possible move
-    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) {
+
+    // move piece if its a possible move
+    if (controller.isCorrectMove(origin, target)) {
       controllerActor ! SetPiece(origin, target)
     }
     else {
