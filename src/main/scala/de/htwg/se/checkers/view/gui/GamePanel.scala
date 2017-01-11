@@ -102,7 +102,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     scalesImage
   }
 
-  def update(controller: CheckersController) {
+  def update(controller: CheckersController): Unit = {
     updateBoard(controller)
     ctrl = Some(controller)
   }

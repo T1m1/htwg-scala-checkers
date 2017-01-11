@@ -21,7 +21,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
     val currentPlayer = controller.currentPlayer
 
     state match {
-      case "s" => {
+      case "s" =>
         println(
           s"""
              |\nPlayer: $currentPlayer it is your turn!
@@ -33,7 +33,6 @@ class Tui(controllerActor: ActorRef) extends Actor {
              |move piece syntax: B2-A3
              |
              |your turn: """.stripMargin)
-      }
       case _ =>
     }
   }
@@ -109,10 +108,9 @@ class Tui(controllerActor: ActorRef) extends Actor {
   }
 
   override def receive: Receive = {
-    case infos: CreateUpdateUI => {
+    case infos: CreateUpdateUI =>
       myPrint(infos.controller.playfield.board)
       displayPossibleMoves(infos.controller, "s")
       processInputLine(infos.controller, StdIn.readLine())
-    }
   }
 }

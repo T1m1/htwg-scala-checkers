@@ -131,8 +131,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   /**
     * Helper method to determine if a move is correct
     *
-    * @param origin
-    * @param target
+    * @param origin start position of piece
+    * @param target end position of piece
     * @return true, if the move is correct
     */
   def isCorrectMove(origin: Coord, target: Coord): Boolean = playfield(target).isEmpty &&
