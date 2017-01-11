@@ -133,8 +133,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     * @return true, if the move is correct
     */
   def isCorrectMove(origin: Coord, target: Coord): Boolean = playfield(target).isEmpty &&
-    playfield(origin).exists(_.colour == currentPlayer) &&
-    getPossibleMoves(currentPlayer).contains(new Move(origin, target))
+    playfield(origin).exists(_.colour == currentPlayer) && getPossibleMoves.contains(new Move(origin, target))
 
   def handleCommand(command: Command): Boolean = {
     command match {
