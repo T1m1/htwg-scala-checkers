@@ -2,13 +2,12 @@ package de.htwg.se.checkers.view
 
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, RegisterUI, CreateUpdateUI}
+import de.htwg.se.checkers.controller.{CheckersController, CreateUpdateUI, RegisterUI}
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.io.StdIn
-import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
 class Tui(controllerActor: ActorRef) extends Actor {

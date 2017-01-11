@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.view.gui
 
-import akka.actor.{Actor, ActorRef, ActorSelection}
+import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.{CreateUpdateUI, RegisterUI}
 
 class Gui(controllerActor: ActorRef) extends Actor {

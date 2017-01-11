@@ -9,8 +9,8 @@ object BindingKeys {
 
 
 object CheckersConfiguration extends NewBindingModule(module => {
-  import module._
   import BindingKeys._
+  import module._
 
   bind[Int] idBy PlayfieldSize toSingle 8
   bind[Int] idBy NumberOfPlayableRows toSingle 3

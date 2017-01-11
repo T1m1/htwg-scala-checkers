@@ -1,6 +1,5 @@
 package de.htwg.se.checkers
 
-import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.Playfield
 
 object Utils {

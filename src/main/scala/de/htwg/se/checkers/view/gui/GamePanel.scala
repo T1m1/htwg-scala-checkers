@@ -7,7 +7,6 @@ import javax.swing.ImageIcon
 import akka.actor.ActorRef
 import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{Piece, Playfield}
 
 import scala.swing.event.ButtonClicked
 import scala.swing.{Button, GridPanel, Label}
