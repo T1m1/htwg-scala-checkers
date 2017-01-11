@@ -52,7 +52,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
     //check if piece is capture -> remove captured element
     if ((math.abs(origin._1 - target._1) == 2) && (Math.abs(origin._2 - target._2) == 2)) {
-      val x = if (currentPlayer.equals(Colour.BLACK)) target._1 + 1 else target._1 - 1
+      val x = if (origin._1 < target._1) origin._1 + 1 else origin._1 - 1
       val y = if (target._2 > origin._2) target._2 - 1 else target._2 + 1
       playfield = playfield.setPiece(new Coord(x, y), None)
     }
@@ -62,19 +62,19 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     nextPlayer
   }
 
-  def getPossiblePieces(color: Colour.Value): IndexedSeq[(Int, Int)] = {
+  def getPossiblePieces: IndexedSeq[(Int, Int)] = {
     for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-      if getPossibleMoves(new Coord(i, j), color).length > 0
+      if getPossibleMoves(new Coord(i, j)).length > 0
     } yield new Coord(i, j)
   }
 
-  def getPossibleMoves(color: Colour.Value): IndexedSeq[((Int, Int), (Int, Int))] = {
+  def getPossibleMoves: IndexedSeq[((Int, Int), (Int, Int))] = {
     val moves = for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-      moves <- getPossibleMoves(new Coord(i, j), color)
+      moves <- getPossibleMoves(new Coord(i, j))
     } yield new MoveCheck((i, j), moves._1, moves._2)
 
 
@@ -88,13 +88,16 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     for (i <- moves) yield new Move(i._1, i._2)
   }
 
-  def getPossibleMoves(c: Coord, color: Colour.Value): Array[CoordStep] = {
+  def getPossibleMoves(c: Coord): Array[CoordStep] = {
+    if (playfield.board(c._1)(c._2).isEmpty || playfield.board(c._1)(c._2).get.colour != currentPlayer) {
+      return Array.empty[CoordStep]
+    }
     // search only if piece is on coordinate
-    if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(color)) {
-      if (color.equals(Colour.BLACK)) {
-        recMoves(c._1 - 1, c._2 + 1, Direction.LEFT, 1, color) ++ recMoves(c._1 + 1, c._2 + 1, Direction.RIGHT, 1, color)
+    if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(currentPlayer)) {
+      if (currentPlayer.equals(Colour.BLACK)) {
+        recMoves(c._1 - 1, c._2 + 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 + 1, Direction.RIGHT, 1)
       } else {
-        recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1, color) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1, color)
+        recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1)
       }
     } else {
       Array.empty[CoordStep]
@@ -107,19 +110,19 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
 
-  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int, colour: Colour.Value): Array[CoordStep] = {
+  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int): Array[CoordStep] = {
     if (deep > 2) return Array.empty[CoordStep]
     if (outOfBoard(x, y)) return Array.empty[CoordStep]
     // if field free and on board
     if (playfield.board(x)(y).isEmpty) if (deep == 2) return Array(new CoordStep((x, y), true)) else return Array(new CoordStep((x, y), false))
     // if same color at position, it is not possible to move the piece
-    if (playfield.board(x)(y).isDefined && playfield.board(x)(y).get.colour.equals(colour)) return Array.empty[CoordStep]
+    if (playfield.board(x)(y).isDefined && playfield.board(x)(y).get.colour.equals(currentPlayer)) return Array.empty[CoordStep]
 
     val newX = newPositionX(x, direction)
-    val newY = newPositionY(y, colour)
+    val newY = newPositionY(y, currentPlayer)
 
     // recursiveMove
-    recMoves(newX, newY, direction, deep + 1, colour)
+    recMoves(newX, newY, direction, deep + 1)
   }
 
   /**

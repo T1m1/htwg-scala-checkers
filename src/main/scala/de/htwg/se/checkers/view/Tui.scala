@@ -2,7 +2,7 @@ package de.htwg.se.checkers.view
 
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, CreateUpdateUI, RegisterUI}
+import de.htwg.se.checkers.controller.{CheckersController, RegisterUI, CreateUpdateUI}
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
@@ -15,7 +15,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
   controllerActor ! RegisterUI
 
   val ALPHABET: Array[Char] = ('A' to 'Z').toArray
-  val Move: Regex = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
+  val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
 
 
   def displayPossibleMoves(controller: CheckersController, state: String): Unit = {
@@ -50,13 +50,13 @@ class Tui(controllerActor: ActorRef) extends Actor {
         controllerActor ! PrintInfo
       case "p" =>
         // print movable pieces
-        controller.getPossiblePieces(controller.currentPlayer) foreach printPossiblePieces
+        controller.getPossiblePieces foreach printPossiblePieces
         println("\nYour turn: ")
         controllerActor ! PrintInfo
       case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
-        controller.getPossibleMoves(controller.currentPlayer) foreach printPossibleMoves
+        controller.getPossibleMoves foreach printPossibleMoves
         controllerActor ! PrintInfo
       case "f" => controllerActor ! PrintInfo
       case Move(_*) => movePieceByInput(controller, input)
@@ -82,7 +82,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
     }.mkString("\n"))
   }
 
-  def prettyPrint(pieces: Option[Piece]): String = pieces.map(x => pieceToString(x)).getOrElse("\u205F")
+  def prettyPrint(pieces: Option[Piece]): String = pieces.fold("\u205F")(x => pieceToString(x))
 
   def pieceToString(piece: Piece): String = if (piece.colour == Colour.BLACK) "\u25CF" else "\u25CB"
 

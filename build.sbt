@@ -19,4 +19,6 @@ libraryDependencies ++= {
 
 libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4-SNAPSHOT"
 
+libraryDependencies += "org.scala-lang" % "scala-swing" % "2.11+"
+
 fork in run := true
