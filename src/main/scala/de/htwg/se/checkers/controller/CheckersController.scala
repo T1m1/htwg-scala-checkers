@@ -13,8 +13,8 @@ import scala.collection.immutable.IndexedSeq
 
 class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
   // Inject
-  val rows = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
-  val size = injectOptional[Int](PlayfieldSize) getOrElse 2
+  val rows: Int = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
+  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 2
 
   var playfield: Playfield = new Playfield(size)
 
@@ -44,10 +44,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
 
   def movePiece(origin: Coord, target: Coord): Unit = {
-    // check if origin is correct
-    //    assume(isCorrectOrigin(origin)) TODO @Steffen please fix your code
-    // check if target is correct
-    //    assume(getTargets(origin) contains target) TODO @Steffen please fix your code
+    // assert correct move
+    assume(isCorrectMove(origin, target))
+
     // unset piece
     playfield = playfield.setPiece(origin, None)
 
@@ -123,11 +122,16 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     recMoves(newX, newY, direction, deep + 1, colour)
   }
 
-  def isCorrectOrigin(position: Coord): Boolean = playfield(position).exists(_.colour == currentPlayer) && playfield.possibleMoves.contains(position)
-
-  def isCorrectTarget(origin: Coord, target: Coord): Boolean = playfield.listTargets(origin) contains target
-
-  def getTargets(origin: Coord): Set[Coord] = playfield.listTargets(origin)
+  /**
+    * Helper method to determine if a move is correct
+    *
+    * @param origin
+    * @param target
+    * @return true, if the move is correct
+    */
+  def isCorrectMove(origin: Coord, target: Coord): Boolean = playfield(target).isEmpty &&
+    playfield(origin).exists(_.colour == currentPlayer) &&
+    getPossibleMoves(currentPlayer).contains(new Move(origin, target))
 
   def handleCommand(command: Command): Boolean = {
     command match {

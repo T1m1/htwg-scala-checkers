@@ -2,22 +2,23 @@ package de.htwg.se.checkers.view
 
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, RegisterUI, CreateUpdateUI}
+import de.htwg.se.checkers.controller.{CheckersController, CreateUpdateUI, RegisterUI}
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.io.StdIn
+import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
 class Tui(controllerActor: ActorRef) extends Actor {
   controllerActor ! RegisterUI
 
-  val ALPHABET = ('A' to 'Z').toArray
-  val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
+  val ALPHABET: Array[Char] = ('A' to 'Z').toArray
+  val Move: Regex = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
 
 
-  def displayPossibleMoves(controller: CheckersController, state: String) = {
+  def displayPossibleMoves(controller: CheckersController, state: String): Unit = {
     val currentPlayer = controller.currentPlayer
 
     state match {
@@ -26,11 +27,11 @@ class Tui(controllerActor: ActorRef) extends Actor {
           s"""
              |\nPlayer: $currentPlayer it is your turn!
              |'p' -> print movable pieces
-             |'m' -> print possble moves
+             |'m' -> print possible moves
              |'f' -> print playfield
              |'n' -> start new game
              |'q' -> quit game
-             |move pice syntax: B2-A3
+             |move piece syntax: B2-A3
              |
              |your turn: """.stripMargin)
       }
@@ -49,13 +50,13 @@ class Tui(controllerActor: ActorRef) extends Actor {
         controllerActor ! PrintInfo
       case "p" =>
         // print movable pieces
-        controller.getPossiblePieces(controller.currentPlayer).foreach(piece => printPossiblePieces(piece))
+        controller.getPossiblePieces(controller.currentPlayer) foreach printPossiblePieces
         println("\nYour turn: ")
         controllerActor ! PrintInfo
       case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
-        controller.getPossibleMoves(controller.currentPlayer).foreach(move => printPossibleMoves(move))
+        controller.getPossibleMoves(controller.currentPlayer) foreach printPossibleMoves
         controllerActor ! PrintInfo
       case "f" => controllerActor ! PrintInfo
       case Move(_*) => movePieceByInput(controller, input)
@@ -91,13 +92,16 @@ class Tui(controllerActor: ActorRef) extends Actor {
 
   def getCoordinate(coordinate: (Int, Int)): String = ALPHABET(coordinate._2) + "" + coordinate._1
 
-  def movePieceByInput(controller: CheckersController, input: String) = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(controller, m))
+  def movePieceByInput(controller: CheckersController, input: String): Unit = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(controller, m))
 
   def parseGroupsAndMove(controller: CheckersController, m: Match): Unit = {
     val origin = new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0)))
     val target = new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0)))
-    // move piece if it a possible move
-    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controllerActor ! SetPiece(origin, target)
+
+    // move piece if its a possible move
+    if (controller.isCorrectMove(origin, target)) {
+      controllerActor ! SetPiece(origin, target)
+    }
     else {
       println("--- Move not possible! ---")
       controllerActor ! PrintInfo
