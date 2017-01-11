@@ -63,11 +63,11 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     nextPlayer
   }
 
-  def getPossiblePieces(color: Colour.Value): IndexedSeq[(Int, Int)] = {
+  def getPossiblePieces: IndexedSeq[(Int, Int)] = {
     for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-      if getPossibleMoves(new Coord(i, j), color).length > 0
+      if getPossibleMoves(new Coord(i, j), currentPlayer).length > 0
     } yield new Coord(i, j)
   }
 
