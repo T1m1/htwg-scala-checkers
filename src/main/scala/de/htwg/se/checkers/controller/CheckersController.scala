@@ -77,15 +77,17 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
       moves <- getPossibleMoves(new Coord(i, j))
     } yield new MoveCheck((i, j), moves._1, moves._2)
 
-
     val captures = for {
       i <- moves
       if i._3.equals(true)
     } yield new Move(i._1, i._2)
 
-    if (captures.nonEmpty) return captures
-    // transform to move
-    for (i <- moves) yield new Move(i._1, i._2)
+    if (captures.nonEmpty) {
+      captures
+    } else {
+      // transform to move
+      for (i <- moves) yield new Move(i._1, i._2)
+    }
   }
 
   def getPossibleMoves(c: Coord): Array[CoordStep] = {
