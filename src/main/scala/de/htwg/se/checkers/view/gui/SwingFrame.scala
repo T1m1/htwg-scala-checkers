@@ -25,7 +25,7 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
   visible = true
 
   def update(info: CreateUpdateUI): Unit = {
-    gamePanel.update(info.controller.playfield)
+    gamePanel.update(info.controller)
   }
 
   def buildMenuBar: MenuBar = {

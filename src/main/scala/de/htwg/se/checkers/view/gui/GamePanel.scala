@@ -5,6 +5,7 @@ import java.awt._
 import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
+import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
@@ -15,6 +16,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   val ALPHABET = ('A' to 'Z').toArray
   val light = Color.decode("#FCEBCC")
   val dark = Color.decode("#FF9B59")
+  val possible  = Color.decode("#FFFB1E")
+  val selected  = Color.decode("#3AFC3D")
   val screenSize = Toolkit.getDefaultToolkit.getScreenSize
   val dim = screenSize.height / 11
   var fields: Array[Array[Button]] = Array.ofDim[Button](8, 8)
@@ -50,7 +53,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
 
-  def updateBoard(board: Vector[Vector[Option[Piece]]]): Unit = {
+  def updateBoard(controller: CheckersController): Unit = {
+    val board = controller.playfield.board
     val switchedBoard = for {
       i <- board.indices
     } yield for {
@@ -75,6 +79,14 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       }
     }
 
+    val possiblePieces = controller.getPossiblePieces
+    for(
+      i <- possiblePieces
+    ) {
+      fields(i._1)(i._2).background = possible
+    }
+
+
   }
 
   def scaleImageIcon(figure: Colour.Value): Image = {
@@ -83,7 +95,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     scalesImage
   }
 
-  def update(playfield: Playfield) {
-    updateBoard(playfield.board)
+  def update(controller: CheckersController) {
+    updateBoard(controller)
   }
 }
