@@ -9,6 +9,7 @@ import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
+import scala.swing.event.ButtonClicked
 import scala.swing.{Button, GridPanel, Label}
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
@@ -16,11 +17,14 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   val ALPHABET = ('A' to 'Z').toArray
   val light = Color.decode("#FCEBCC")
   val dark = Color.decode("#FF9B59")
-  val possible  = Color.decode("#FFFB1E")
-  val selected  = Color.decode("#3AFC3D")
+  val possible = Color.decode("#FFFB1E")
+  val selected = Color.decode("#3AFC3D")
   val screenSize = Toolkit.getDefaultToolkit.getScreenSize
   val dim = screenSize.height / 11
   var fields: Array[Array[Button]] = Array.ofDim[Button](8, 8)
+
+  var ctrl: Option[CheckersController] = None
+  var lastSelected: Array[(Int, Int, Color)] = Array()
 
   // add column descriptions
   contents += new Label
@@ -39,6 +43,10 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     // create button
     val button = new Button() {
       margin = new Insets(0, 0, 0, 0)
+
+      reactions += {
+        case _: ButtonClicked => displayPossibleMoves(row, column)
+      }
     }
     fields(row)(column) = button
 
@@ -80,7 +88,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     }
 
     val possiblePieces = controller.getPossiblePieces
-    for(
+    for (
       i <- possiblePieces
     ) {
       fields(i._1)(i._2).background = possible
@@ -97,5 +105,20 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   def update(controller: CheckersController) {
     updateBoard(controller)
+    ctrl = Some(controller)
   }
+
+  def drawButton(move: ((Int, Int), Boolean)): Unit = {
+    lastSelected :+=(move._1._1, move._1._2, fields(move._1._1)(move._1._2).background)
+    fields(move._1._1)(move._1._2).background = selected
+  }
+
+  def displayPossibleMoves(row: Int, column: Int): Unit = {
+    lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
+    if (ctrl.isDefined && ctrl.get.playfield.board(row)(column).isDefined) {
+      ctrl.get.getPossibleMoves((row, column), ctrl.get.playfield.board(row)(column).get.colour).foreach(move => drawButton(move))
+    }
+  }
+
+
 }
