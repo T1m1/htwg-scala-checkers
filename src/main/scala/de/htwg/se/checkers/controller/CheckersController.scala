@@ -110,7 +110,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
 
-  def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int): Array[CoordStep] = {
+  @scala.annotation.tailrec
+  final def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int): Array[CoordStep] = {
     if (deep > 2) return Array.empty[CoordStep]
     if (outOfBoard(x, y)) return Array.empty[CoordStep]
     // if field free and on board
