@@ -5,25 +5,23 @@ import java.awt._
 import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
+import de.htwg.se.checkers.model.enumeration.Colour
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
 import scala.swing.{Button, GridPanel, Label}
 
-
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
-  private val cols = Array("A", "B", "C", "D", "E", "F", "G", "H")
-  private val light = Color.decode("#FCEBCC")
-  private val dark = Color.decode("#FF9B59")
-
-  val screenSize = Toolkit.getDefaultToolkit.getScreenSize;
+  val ALPHABET = ('A' to 'Z').toArray
+  val light = Color.decode("#FCEBCC")
+  val dark = Color.decode("#FF9B59")
+  val screenSize = Toolkit.getDefaultToolkit.getScreenSize
   val dim = screenSize.height / 11
-
-  var chessButtons: Array[Array[Button]] = Array.ofDim[Button](8, 8)
+  var fields: Array[Array[Button]] = Array.ofDim[Button](8, 8)
 
   // add column descriptions
   contents += new Label
-  for (column <- chessButtons.indices) {
+  for (column <- fields.indices) {
     contents += new Label {
       text = column.toString
       font = new Font(Font.SANS_SERIF, Font.BOLD, 40)
@@ -32,24 +30,19 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   // create and add buttons
   for {
-    column <- chessButtons.indices
-    row <- chessButtons.indices
+    column <- fields.indices
+    row <- fields.indices
   } {
     // create button
     val button = new Button() {
       margin = new Insets(0, 0, 0, 0)
-      /*
-        reactions += {
-          case _: ButtonClicked => controller ! MoveCmd(row, column)
-        }
-*/
     }
-    chessButtons(row)(column) = button
+    fields(row)(column) = button
 
     // add button
     if (row == 0) {
       contents += new Label {
-        text = cols(column)
+        text = ALPHABET(column).toString
         font = new Font(Font.SANS_SERIF, Font.BOLD, 40)
       }
     }
@@ -68,7 +61,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       i <- switchedBoard.indices
       j <- switchedBoard(i).indices
     } {
-      val button = chessButtons(j)(i)
+      val button = fields(j)(i)
       if ((i + j) % 2 == 1) {
         button.background = dark
       } else {
@@ -76,17 +69,18 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       }
       // set figures
       if (switchedBoard(i)(j).isDefined) {
-        val figure = switchedBoard(i)(j).get.colour
-        val image = getClass.getResource("/image/" + figure + ".png")
-        val scalesImage = new ImageIcon(image).getImage.getScaledInstance(dim, dim, java.awt.Image.SCALE_SMOOTH)
-        button.icon = new ImageIcon(scalesImage)
-
-        //button.icon = new ImageIcon(aaa)
+        button.icon = new ImageIcon(scaleImageIcon(switchedBoard(i)(j).get.colour))
       } else {
         button.icon = null
       }
     }
 
+  }
+
+  def scaleImageIcon(figure: Colour.Value): Image = {
+    val image = getClass.getResource("/image/" + figure + ".png")
+    val scalesImage = new ImageIcon(image).getImage.getScaledInstance(dim, dim, java.awt.Image.SCALE_SMOOTH)
+    scalesImage
   }
 
   def update(playfield: Playfield) {

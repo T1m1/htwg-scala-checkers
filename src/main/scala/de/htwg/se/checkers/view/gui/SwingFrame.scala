@@ -4,24 +4,13 @@ import java.awt.{Dimension, Toolkit}
 
 import akka.actor.ActorRef
 import de.htwg.se.checkers.controller.CreateUpdateUI
-import de.htwg.se.checkers.model.Playfield
 
 import scala.swing._
 import scala.swing.event.Key
 
 class SwingFrame(controllerActor: ActorRef) extends Frame {
-
-  menuBar = new MenuBar {
-    contents += new Menu("Game") {
-      mnemonic = Key.G
-      contents += new MenuItem(Action("New") {
-        controllerActor ! println("restart game")
-      })
-      contents += new MenuItem(Action("Quit") {
-        controllerActor ! println("quit game")
-      })
-    }
-  }
+  title = "Checkers"
+  menuBar = buildMenuBar
 
   val gamePanel = new GamePanel(controllerActor)
 
@@ -29,16 +18,28 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
     layout(gamePanel) = BorderPanel.Position.Center
   }
 
-  title = "Checkers"
   peer.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
 
-  val screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-  val dim = screenSize.height - 100
+  val dim = Toolkit.getDefaultToolkit.getScreenSize.height - 100
   size = new Dimension(dim, dim)
   visible = true
 
   def update(info: CreateUpdateUI): Unit = {
     gamePanel.update(info.controller.playfield)
+  }
+
+  def buildMenuBar: MenuBar = {
+    new MenuBar {
+      contents += new Menu("Game") {
+        mnemonic = Key.G
+        contents += new MenuItem(Action("New") {
+          controllerActor ! println("restart game")
+        })
+        contents += new MenuItem(Action("Quit") {
+          controllerActor ! println("quit game")
+        })
+      }
+    }
   }
 
 }
