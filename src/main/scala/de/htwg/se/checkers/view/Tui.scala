@@ -49,7 +49,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
         controllerActor ! PrintInfo
       case "p" =>
         // print movable pieces
-        controller.getPossiblePieces(controller.currentPlayer).foreach(piece => printPossiblePieces(piece))
+        controller.getPossiblePieces.foreach(piece => printPossiblePieces(piece))
         println("\nYour turn: ")
         controllerActor ! PrintInfo
       case "n" => print("TODO start new game")
@@ -81,7 +81,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
     }.mkString("\n"))
   }
 
-  def prettyPrint(pieces: Option[Piece]): String = pieces.map(x => pieceToString(x)).getOrElse("\u205F")
+  def prettyPrint(pieces: Option[Piece]): String = pieces.fold("\u205F")(x => pieceToString(x))
 
   def pieceToString(piece: Piece): String = if (piece.colour == Colour.BLACK) "\u25CF" else "\u25CB"
 
