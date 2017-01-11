@@ -13,9 +13,8 @@ import scala.swing.{Button, GridPanel, Label}
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   private val cols = Array("A", "B", "C", "D", "E", "F", "G", "H")
-  private val light = Color.decode("#E5CEA4")
-  private val dark = Color.decode("#A4785B")
-  private val lightBlue = Color.decode("#B8CFE5")
+  private val light = Color.decode("#FCEBCC")
+  private val dark = Color.decode("#FF9B59")
   private val imagesPath = "public/images/"
 
   var chessButtons: Array[Array[Button]] = Array.ofDim[Button](8, 8)
@@ -63,7 +62,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
     for {
       i <- switchedBoard.indices
-      j <- 0 until rows
+      j <- switchedBoard(i).indices
     } {
       val button = chessButtons(i)(j)
       if ((i + j) % 2 == 1) {

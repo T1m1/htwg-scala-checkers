@@ -29,11 +29,12 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
     layout(gamePanel) = BorderPanel.Position.Center
   }
 
-  title = "Chess"
+  title = "Checkers"
   peer.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
 
   val screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-  size = new Dimension(screenSize.width, screenSize.height)
+  val dim = screenSize.height
+  size = new Dimension(dim, dim)
   visible = true
 
   def update(info: CreateUpdateUI): Unit = {
