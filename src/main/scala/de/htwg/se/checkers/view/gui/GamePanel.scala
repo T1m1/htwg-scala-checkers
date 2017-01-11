@@ -1,10 +1,10 @@
 package de.htwg.se.checkers.view.gui
 
 
-import java.awt.{Color, Insets}
+import java.awt.{Color, Dimension, Insets, Toolkit}
+import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
-import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.model.{Piece, Playfield}
 
 import scala.swing.{Button, GridPanel, Label}
@@ -15,7 +15,9 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   private val cols = Array("A", "B", "C", "D", "E", "F", "G", "H")
   private val light = Color.decode("#FCEBCC")
   private val dark = Color.decode("#FF9B59")
-  private val imagesPath = "public/images/"
+
+  val screenSize = Toolkit.getDefaultToolkit.getScreenSize;
+  val dim = screenSize.height / 11
 
   var chessButtons: Array[Array[Button]] = Array.ofDim[Button](8, 8)
 
@@ -29,7 +31,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   // create and add buttons
   for {
-    column <- chessButtons.indices.reverse
+    column <- chessButtons.indices
     row <- chessButtons.indices
   } {
     // create button
@@ -70,7 +72,17 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       } else {
         button.background = light
       }
+      // set figures
+      if (switchedBoard(i)(j).isDefined) {
+        val figure = switchedBoard(i)(j).get.colour
+        val image = getClass.getResource("/image/" + figure + ".png")
+        val scalesImage = new ImageIcon(image).getImage.getScaledInstance(dim, dim, java.awt.Image.SCALE_SMOOTH)
+        button.icon = new ImageIcon(scalesImage)
 
+        //button.icon = new ImageIcon(aaa)
+      } else {
+        button.icon = null
+      }
     }
 
   }
