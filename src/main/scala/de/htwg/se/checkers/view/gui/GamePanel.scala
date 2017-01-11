@@ -116,7 +116,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   def displayPossibleMoves(row: Int, column: Int): Unit = {
     lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
     if (ctrl.isDefined && ctrl.get.playfield.board(row)(column).isDefined) {
-      ctrl.get.getPossibleMoves((row, column), ctrl.get.playfield.board(row)(column).get.colour).foreach(move => drawButton(move))
+      ctrl.get.getPossibleMoves((row, column)).foreach(move => drawButton(move))
     }
   }
 

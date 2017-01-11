@@ -55,7 +55,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
       case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
-        controller.getPossibleMoves(controller.currentPlayer).foreach(move => printPossibleMoves(move))
+        controller.getPossibleMoves.foreach(move => printPossibleMoves(move))
         controllerActor ! PrintInfo
       case "f" => controllerActor ! PrintInfo
       case Move(_*) => movePieceByInput(controller, input)
@@ -97,7 +97,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
     val origin = new Coord((m group 2).toInt, ALPHABET.indexOf(m.group(1).charAt(0)))
     val target = new Coord((m group 4).toInt, ALPHABET.indexOf(m.group(3).charAt(0)))
     // move piece if it a possible move
-    if (controller.getPossibleMoves(controller.currentPlayer).contains(new Move(origin, target))) controllerActor ! SetPiece(origin, target)
+    if (controller.getPossibleMoves.contains(new Move(origin, target))) controllerActor ! SetPiece(origin, target)
     else {
       println("--- Move not possible! ---")
       controllerActor ! PrintInfo
