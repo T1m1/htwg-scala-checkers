@@ -1,7 +1,7 @@
 package de.htwg.se.checkers.view.gui
 
 
-import java.awt.{Color, Dimension, Insets, Toolkit}
+import java.awt._
 import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
@@ -25,7 +25,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   contents += new Label
   for (column <- chessButtons.indices) {
     contents += new Label {
-      text = cols(column)
+      text = column.toString
+      font = new Font(Font.SANS_SERIF, Font.BOLD, 40)
     }
   }
 
@@ -48,7 +49,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     // add button
     if (row == 0) {
       contents += new Label {
-        text = (column + 1).toString
+        text = cols(column)
+        font = new Font(Font.SANS_SERIF, Font.BOLD, 40)
       }
     }
     contents += button
@@ -66,7 +68,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       i <- switchedBoard.indices
       j <- switchedBoard(i).indices
     } {
-      val button = chessButtons(i)(j)
+      val button = chessButtons(j)(i)
       if ((i + j) % 2 == 1) {
         button.background = dark
       } else {
