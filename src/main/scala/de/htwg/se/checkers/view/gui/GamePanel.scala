@@ -6,6 +6,7 @@ import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
 import de.htwg.se.checkers.controller.CheckersController
+import de.htwg.se.checkers.controller.command.SetPiece
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.swing.event.ButtonClicked
@@ -24,6 +25,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   var ctrl: Option[CheckersController] = None
   var lastSelected: Array[(Int, Int, Color)] = Array()
+  var selectedPiece: Option[(Int, Int)] = None
 
   // add column descriptions
   contents += new Label
@@ -61,6 +63,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
 
   def updateBoard(controller: CheckersController): Unit = {
+    selectedPiece = None
+    lastSelected = Array()
     val board = controller.playfield.board
     val switchedBoard = for {
       i <- board.indices
@@ -85,10 +89,14 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
         button.icon = null
       }
     }
+    var a: Array[(Int, Int)] = Array()
+    for (elem <- controller.getPossibleMoves) {
+      a :+= elem._1
+    }
 
     val possiblePieces = controller.getPossiblePieces
     for (
-      i <- possiblePieces
+      i <- a
     ) {
       fields(i._1)(i._2).background = possible
     }
@@ -107,16 +115,33 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     ctrl = Some(controller)
   }
 
-  def drawButton(move: ((Int, Int), Boolean)): Unit = {
-    lastSelected :+=(move._1._1, move._1._2, fields(move._1._1)(move._1._2).background)
-    fields(move._1._1)(move._1._2).background = selected
+  def drawButton(move: ((Int, Int))): Unit = {
+    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
+    fields(move._1)(move._2).background = selected
   }
 
   def displayPossibleMoves(row: Int, column: Int): Unit = {
-    lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
-    if (ctrl.isDefined && ctrl.get.playfield.board(row)(column).isDefined) {
-      drawButton(((row, column), false))
-      ctrl.get.getPossibleMoves((row, column)).foreach(move => drawButton(move))
+    if (selectedPiece.isDefined) {
+      // TODO refactor
+      var a: Array[(Int, Int)] = Array()
+      for (elem <- ctrl.get.getPossibleMoves) {
+        a :+= elem._2
+      }
+      if (a.contains((row, column))) {
+        controllerActor ! SetPiece((selectedPiece.get._1, selectedPiece.get._2), (row, column))
+      } else {
+        // TODO add Dialog
+        println("Move not possible")
+        selectedPiece = None
+        updateBoard(ctrl.get)
+      }
+    } else {
+      lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
+      if (ctrl.isDefined && ctrl.get.playfield.board(row)(column).isDefined) {
+        drawButton((row, column))
+        selectedPiece = Some((row, column))
+        ctrl.get.getPossibleTargets((row, column)).foreach(move => drawButton(move))
+      }
     }
   }
 
