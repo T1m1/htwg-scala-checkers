@@ -66,7 +66,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-      if getPossibleMoves(new Coord(i, j)).length > 0
+      if calculatePossibleMoves(new Coord(i, j)).length > 0
     } yield new Coord(i, j)
   }
 
@@ -74,7 +74,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     val moves = for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
-      moves <- getPossibleMoves(new Coord(i, j))
+      moves <- calculatePossibleMoves(new Coord(i, j))
     } yield new MoveCheck((i, j), moves._1, moves._2)
 
     val captures = for {
@@ -90,7 +90,23 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
   }
 
-  def getPossibleMoves(c: Coord): Array[CoordStep] = {
+  def getPossibleTargets(c: Coord): Array[(Int, Int)] = {
+    val moves = calculatePossibleMoves(c)
+
+    val captures = for {
+      i <- moves
+      if i._2.equals(true)
+    } yield new Coord(i._1._1, i._1._2)
+
+    if (captures.nonEmpty) {
+      captures
+    } else {
+      for (i <- moves) yield new Coord(i._1._1, i._1._2)
+    }
+  }
+
+
+  private def calculatePossibleMoves(c: Coord): Array[CoordStep] = {
     if (playfield.board(c._1)(c._2).isEmpty || playfield.board(c._1)(c._2).get.colour != currentPlayer) {
       return Array.empty[CoordStep]
     }
