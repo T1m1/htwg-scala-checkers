@@ -4,12 +4,12 @@ import java.awt._
 import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
-import de.htwg.se.checkers.controller.CheckersController
 import de.htwg.se.checkers.controller.command.SetPiece
+import de.htwg.se.checkers.model.GameState
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.swing.event.ButtonClicked
-import scala.swing.{ Button, GridPanel, Label }
+import scala.swing.{Button, GridPanel, Label}
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
@@ -22,7 +22,6 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   val dim = screenSize.height / 11
   var fields: Array[Array[Button]] = Array.ofDim[Button](8, 8)
 
-  var ctrl: Option[CheckersController] = None
   var lastSelected: Array[(Int, Int, Color)] = Array()
   var selectedPiece: Option[(Int, Int)] = None
 
@@ -60,10 +59,10 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     contents += button
   }
 
-  def updateBoard(controller: CheckersController): Unit = {
+  def updateBoard(state: GameState): Unit = {
     selectedPiece = None
     lastSelected = Array()
-    val board = controller.playfield.board
+    val board = state.field.board
     val switchedBoard = for {
       i <- board.indices
     } yield for {
@@ -107,9 +106,8 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     scalesImage
   }
 
-  def update(controller: CheckersController): Unit = {
-    updateBoard(controller)
-    ctrl = Some(controller)
+  def update(state: GameState): Unit = {
+    updateBoard(state)
   }
 
   def drawButton(move: ((Int, Int))): Unit = {

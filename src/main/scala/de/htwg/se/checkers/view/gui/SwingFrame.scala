@@ -1,9 +1,9 @@
 package de.htwg.se.checkers.view.gui
 
-import java.awt.{ Dimension, Toolkit }
+import java.awt.{Dimension, Toolkit}
 
 import akka.actor.ActorRef
-import de.htwg.se.checkers.controller.CreateUpdateUI
+import de.htwg.se.checkers.model.GameState
 
 import scala.swing._
 import scala.swing.event.Key
@@ -24,8 +24,8 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
   size = new Dimension(dim, dim)
   visible = true
 
-  def update(info: CreateUpdateUI): Unit = {
-    gamePanel.update(info.controller)
+  def update(state: GameState): Unit = {
+    gamePanel.update(state)
   }
 
   def buildMenuBar: MenuBar = {

@@ -1,7 +1,8 @@
 package de.htwg.se.checkers.view.gui
 
-import akka.actor.{ Actor, ActorRef }
-import de.htwg.se.checkers.controller.{ CreateUpdateUI, RegisterUI }
+import akka.actor.{Actor, ActorRef}
+import de.htwg.se.checkers.controller.{RegisterUI}
+import de.htwg.se.checkers.model.GameState
 
 class Gui(controllerActor: ActorRef) extends Actor {
   controllerActor ! RegisterUI
@@ -9,6 +10,6 @@ class Gui(controllerActor: ActorRef) extends Actor {
   val frame = new SwingFrame(controllerActor)
 
   override def receive: Receive = {
-    case infos: CreateUpdateUI => frame.update(infos)
+    case state: GameState => frame.update(state)
   }
 }
