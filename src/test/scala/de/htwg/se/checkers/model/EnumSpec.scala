@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.model
 
-import de.htwg.se.checkers.model.enumeration.Colour
+import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import org.scalatest._
 
 class EnumSpec extends WordSpec with Matchers {
@@ -20,4 +20,17 @@ class EnumSpec extends WordSpec with Matchers {
       piece.colour should be(Colour.WHITE)
     }
   }
+
+  "A new ENUM of direction" should {
+
+    "contain the correct String" in {
+      Direction.withName("UP")
+      Direction.DOWN.toString should be("DOWN")
+      Direction.UP.toString should be("UP")
+      Direction.RIGHT.toString should be("RIGHT")
+      Direction.LEFT.toString should be("LEFT")
+    }
+  }
+
+
 }
