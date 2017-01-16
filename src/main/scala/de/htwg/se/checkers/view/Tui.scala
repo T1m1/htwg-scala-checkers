@@ -2,14 +2,13 @@ package de.htwg.se.checkers.view
 
 import java.util.concurrent.TimeUnit
 
-import akka.pattern.ask
 import akka.actor.{Actor, ActorRef}
-import akka.util.Timeout
+import akka.pattern.ask
+import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command._
-import de.htwg.se.checkers.controller.{CreateUpdateUI, RegisterUI}
-import de.htwg.se.checkers.model.{GameState, Piece, Playfield}
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
+import de.htwg.se.checkers.model.{GameState, Piece, Playfield}
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
@@ -25,7 +24,7 @@ case class Tui(controllerActor: ActorRef) extends Actor {
 
   override def receive: Receive = {
     case update: GameState =>
-      myPrint(update.field)
+      printField(update.field)
       printGameOptions(update.currentPlayer)
       processInputLine(StdIn.readLine())
   }
@@ -76,7 +75,7 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     continue
   }
 
-  def myPrint(playfield: Playfield): Unit = {
+  def printField(playfield: Playfield): Unit = {
     val board = playfield.board
     print(board.indices.map(i => i + "\u205F").mkString("\\\u205F ", "", "\n"))
 
