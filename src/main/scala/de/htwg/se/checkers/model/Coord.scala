@@ -3,7 +3,6 @@ package de.htwg.se.checkers.model
 import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.enumeration.Direction
 
-
 package object api {
   type Coord = (Int, Int)
   type CoordStep = ((Int, Int), Boolean)

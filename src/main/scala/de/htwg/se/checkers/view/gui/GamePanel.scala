@@ -1,6 +1,5 @@
 package de.htwg.se.checkers.view.gui
 
-
 import java.awt._
 import javax.swing.ImageIcon
 
@@ -10,7 +9,7 @@ import de.htwg.se.checkers.controller.command.SetPiece
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.swing.event.ButtonClicked
-import scala.swing.{Button, GridPanel, Label}
+import scala.swing.{ Button, GridPanel, Label }
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
@@ -61,7 +60,6 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     contents += button
   }
 
-
   def updateBoard(controller: CheckersController): Unit = {
     selectedPiece = None
     lastSelected = Array()
@@ -101,7 +99,6 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       fields(i._1)(i._2).background = possible
     }
 
-
   }
 
   def scaleImageIcon(figure: Colour.Value): Image = {
@@ -116,7 +113,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
   def drawButton(move: ((Int, Int))): Unit = {
-    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
+    lastSelected :+= (move._1, move._2, fields(move._1)(move._2).background)
     fields(move._1)(move._2).background = selected
   }
 
@@ -144,6 +141,5 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       }
     }
   }
-
 
 }

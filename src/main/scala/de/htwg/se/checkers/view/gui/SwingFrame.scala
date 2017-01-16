@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.view.gui
 
-import java.awt.{Dimension, Toolkit}
+import java.awt.{ Dimension, Toolkit }
 
 import akka.actor.ActorRef
 import de.htwg.se.checkers.controller.CreateUpdateUI

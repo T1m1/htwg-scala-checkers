@@ -1,8 +1,8 @@
 package de.htwg.se.checkers.view
 
-import akka.actor.{Actor, ActorRef}
-import de.htwg.se.checkers.controller.command.{PrintInfo, SetPiece}
-import de.htwg.se.checkers.controller.{CheckersController, CreateUpdateUI, RegisterUI}
+import akka.actor.{ Actor, ActorRef }
+import de.htwg.se.checkers.controller.command.{ PrintInfo, SetPiece }
+import de.htwg.se.checkers.controller.{ CheckersController, CreateUpdateUI, RegisterUI }
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
@@ -15,7 +15,6 @@ class Tui(controllerActor: ActorRef) extends Actor {
 
   val ALPHABET: Array[Char] = ('A' to 'Z').toArray
   val Move = "([A-Z])([0-9])\\-([A-Z])([0-9])".r
-
 
   def displayPossibleMoves(controller: CheckersController, state: String): Unit = {
     val currentPlayer = controller.currentPlayer
@@ -32,7 +31,8 @@ class Tui(controllerActor: ActorRef) extends Actor {
              |'q' -> quit game
              |move piece syntax: B2-A3
              |
-             |your turn: """.stripMargin)
+             |your turn: """.stripMargin
+        )
       case _ =>
     }
   }
@@ -99,8 +99,7 @@ class Tui(controllerActor: ActorRef) extends Actor {
     // move piece if its a possible move
     if (controller.isCorrectMove(origin, target)) {
       controllerActor ! SetPiece(origin, target)
-    }
-    else {
+    } else {
       println("--- Move not possible! ---")
       controllerActor ! PrintInfo
     }

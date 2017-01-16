@@ -1,8 +1,8 @@
 package de.htwg.se.checkers.controller
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import de.htwg.se.checkers.CheckersConfiguration
-import de.htwg.se.checkers.controller.command.{Command, PrintInfo}
+import de.htwg.se.checkers.controller.command.{ Command, PrintInfo }
 
 import scala.collection.mutable.ListBuffer
 
@@ -17,7 +17,8 @@ class ControllerActor() extends Actor {
   val userInterfaces = new ListBuffer[ActorRef]()
 
   override def receive: Receive = {
-    case RegisterUI => userInterfaces += sender(); sender() ! createUpdateUI()
+    case RegisterUI =>
+      userInterfaces += sender(); sender() ! createUpdateUI()
     case DeregisterUI => userInterfaces -= sender()
     case PrintInfo => userInterfaces.foreach(_ ! createUpdateUI())
     case command: Command => controller.handleCommand(command) match {

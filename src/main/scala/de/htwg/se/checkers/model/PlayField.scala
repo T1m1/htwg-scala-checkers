@@ -2,12 +2,9 @@ package de.htwg.se.checkers.model
 
 import de.htwg.se.checkers.model.api.Coord
 
-
 case class Playfield(board: Vector[Vector[Option[Piece]]], size: Int) {
 
-
   def apply(pos: Coord): Option[Piece] = board(pos._1)(pos._2)
-
 
   // constructor for default parameter size
   def this(board: Vector[Vector[Option[Piece]]]) = this(board, board.size)

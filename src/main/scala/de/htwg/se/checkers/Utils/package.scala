@@ -19,7 +19,6 @@ object CheckerRules {
     // There must be at least one empty row on the field at the beginning of the game
     def ensureCorrectRows(rows: Int): Boolean = rows > 0 && field.size / 2 > rows
 
-
   }
 
 }

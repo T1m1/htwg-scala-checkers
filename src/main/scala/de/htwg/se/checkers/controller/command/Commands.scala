@@ -2,7 +2,6 @@ package de.htwg.se.checkers.controller.command
 
 import de.htwg.se.checkers.model.api._
 
-
 trait Command {}
 
 case class SetPiece(start: Coord, end: Coord) extends Command

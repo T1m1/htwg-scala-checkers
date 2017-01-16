@@ -7,7 +7,6 @@ object BindingKeys {
   object NumberOfPlayableRows extends BindingId
 }
 
-
 object CheckersConfiguration extends NewBindingModule(module => {
   import BindingKeys._
   import module._
