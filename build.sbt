@@ -16,8 +16,7 @@ libraryDependencies ++= {
     "com.escalatesoft.subcut" %% "subcut" % "2.1"
   )
 }
-
-libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.4-SNAPSHOT"
+libraryDependencies += "com.typesafe.akka" % "akka-remote_2.11" % "2.4.12"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.11+"
 
