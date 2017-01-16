@@ -17,16 +17,20 @@ class ControllerActor() extends Actor {
   val userInterfaces = new ListBuffer[ActorRef]()
 
   override def receive: Receive = {
-    case RegisterUI =>
-      userInterfaces += sender(); sender() ! createUpdateUI()
+    case RegisterUI => userInterfaces += sender(); sender() ! controller.getState
     case DeregisterUI => userInterfaces -= sender()
-    case PrintInfo => userInterfaces.foreach(_ ! createUpdateUI())
+
     case GetMoves => sender ! controller.getPossibleMoves
     case GetCurrentPlayer => sender ! controller.currentPlayer
     case GetPossiblePieces => sender ! controller.getPossiblePieces
-    case command: Command => controller.handleCommand(command) match {
-      case true => userInterfaces.foreach(_ ! createUpdateUI())
-    }
+
+    case GameStatus => sender ! controller.getState
+    case command: Command =>
+      val state = controller.handleCommand(command)
+      // update listener
+      userInterfaces.foreach(_ ! state)
+
+    case _ => print("Unrecognised Command in Controller Actor")
   }
 
   private def createUpdateUI() = {
