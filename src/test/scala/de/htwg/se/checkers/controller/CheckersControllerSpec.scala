@@ -19,8 +19,6 @@ class CheckersControllerSpec extends WordSpec with Matchers {
     "be a size of 8" in {
       ctr.size should be(8)
     }
-
-    ""
   }
 
 }

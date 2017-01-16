@@ -1,17 +1,23 @@
 package de.htwg.se.checkers.view.gui
 
 import java.awt._
+import java.util.concurrent.TimeUnit
 import javax.swing.ImageIcon
 
 import akka.actor.ActorRef
-import de.htwg.se.checkers.controller.command.SetPiece
+import akka.pattern.ask
+import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.model.GameState
 import de.htwg.se.checkers.model.enumeration.Colour
 
+import scala.collection.immutable.IndexedSeq
+import scala.concurrent.Await
 import scala.swing.event.ButtonClicked
 import scala.swing.{Button, GridPanel, Label}
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
+
+  implicit val timeout = akka.util.Timeout(5, TimeUnit.SECONDS)
 
   val ALPHABET = ('A' to 'Z').toArray
   val light = Color.decode("#FCEBCC")
@@ -87,11 +93,14 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       }
     }
     var a: Array[(Int, Int)] = Array()
-    for (elem <- controller.getPossibleMoves) {
+
+    val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
+    val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
+
+    for (elem <- possibleMoves) {
       a :+= elem._1
     }
 
-    val possiblePieces = controller.getPossiblePieces
     for (
       i <- a
     ) {
@@ -111,31 +120,35 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
   def drawButton(move: ((Int, Int))): Unit = {
-    lastSelected :+= (move._1, move._2, fields(move._1)(move._2).background)
+    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
     fields(move._1)(move._2).background = selected
   }
 
   def displayPossibleMoves(row: Int, column: Int): Unit = {
     if (selectedPiece.isDefined) {
       // TODO refactor
+
+      val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
+
       var a: Array[(Int, Int)] = Array()
-      for (elem <- ctrl.get.getPossibleMoves) {
+      for (elem <- possibleMoves) {
         a :+= elem._2
       }
       if (a.contains((row, column))) {
         controllerActor ! SetPiece((selectedPiece.get._1, selectedPiece.get._2), (row, column))
       } else {
-        // TODO add Dialog
-        println("Move not possible")
         selectedPiece = None
-        updateBoard(ctrl.get)
+        controllerActor ! GameStatus
       }
     } else {
       lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
-      if (ctrl.isDefined && ctrl.get.playfield.board(row)(column).isDefined) {
+      val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
+      val possibleTargets = Await.result(controllerActor ? GetPossibleTargets((row, column)), timeout.duration).asInstanceOf[Array[(Int, Int)]]
+
+      if (possiblePieces.contains((row, column))) {
         drawButton((row, column))
         selectedPiece = Some((row, column))
-        ctrl.get.getPossibleTargets((row, column)).foreach(move => drawButton(move))
+        possibleTargets.foreach(move => drawButton(move))
       }
     }
   }
