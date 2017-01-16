@@ -18,17 +18,18 @@ class ControllerActor() extends Actor {
 
   override def receive: Receive = {
 
-      // Handle register/deregister of Listeners
+    // Handle register/deregister of Listeners
     case RegisterUI => userInterfaces += sender(); sender() ! controller.getState
     case DeregisterUI => userInterfaces -= sender()
 
-      // Ask - Pattern
+    // Ask - Pattern
     case GetMoves => sender ! controller.getPossibleMoves
     case GetCurrentPlayer => sender ! controller.currentPlayer
     case GetPossiblePieces => sender ! controller.getPossiblePieces
+    case GetPossibleTargets(coord) => sender ! controller.getPossibleTargets(coord)
     case GameStatus => sender ! controller.getState
 
-      // Handle command and notify all other Listeners
+    // Handle command and notify all other Listeners
     case command: Command =>
       val state = controller.handleCommand(command)
       // update listener

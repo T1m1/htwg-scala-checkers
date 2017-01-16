@@ -17,3 +17,5 @@ case class GetMoves() extends Command
 case class GetCurrentPlayer() extends Command
 
 case class GetPossiblePieces() extends Command
+
+case class GetPossibleTargets(coord: Coord) extends Command
