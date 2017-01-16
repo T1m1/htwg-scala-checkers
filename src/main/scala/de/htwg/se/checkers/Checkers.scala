@@ -1,9 +1,8 @@
 package de.htwg.se.checkers
 
-import akka.actor.{ ActorSystem, Props }
+import akka.actor.{ActorSystem, Props}
 import de.htwg.se.checkers.controller.ControllerActor
 import de.htwg.se.checkers.view.Tui
-import de.htwg.se.checkers.view.gui.Gui
 
 object Checkers {
 

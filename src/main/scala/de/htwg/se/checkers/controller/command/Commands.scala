@@ -10,7 +10,7 @@ case class QuitGame() extends Command
 
 case class NewGame() extends Command
 
-case class PrintInfo() extends Command
+case class GameStatus() extends Command
 
 case class GetMoves() extends Command
 
