@@ -20,4 +20,7 @@ libraryDependencies += "com.typesafe.akka" % "akka-remote_2.11" % "2.4.12"
 
 libraryDependencies += "org.scala-lang" % "scala-swing" % "2.11+"
 
+libraryDependencies += "com.typesafe.play" %% "play-json" % "2.3.4"
+
+
 fork in run := true
