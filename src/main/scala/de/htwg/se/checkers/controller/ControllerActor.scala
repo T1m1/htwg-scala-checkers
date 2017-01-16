@@ -1,8 +1,8 @@
 package de.htwg.se.checkers.controller
 
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.CheckersConfiguration
-import de.htwg.se.checkers.controller.command.{ Command, PrintInfo }
+import de.htwg.se.checkers.controller.command._
 
 import scala.collection.mutable.ListBuffer
 
@@ -21,6 +21,9 @@ class ControllerActor() extends Actor {
       userInterfaces += sender(); sender() ! createUpdateUI()
     case DeregisterUI => userInterfaces -= sender()
     case PrintInfo => userInterfaces.foreach(_ ! createUpdateUI())
+    case GetMoves => sender ! controller.getPossibleMoves
+    case GetCurrentPlayer => sender ! controller.currentPlayer
+    case GetPossiblePieces => sender ! controller.getPossiblePieces
     case command: Command => controller.handleCommand(command) match {
       case true => userInterfaces.foreach(_ ! createUpdateUI())
     }

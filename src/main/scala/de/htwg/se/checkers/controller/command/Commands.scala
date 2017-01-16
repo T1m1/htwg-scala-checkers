@@ -11,3 +11,9 @@ case class QuitGame() extends Command
 case class NewGame() extends Command
 
 case class PrintInfo() extends Command
+
+case class GetMoves() extends Command
+
+case class GetCurrentPlayer() extends Command
+
+case class GetPossiblePieces() extends Command
