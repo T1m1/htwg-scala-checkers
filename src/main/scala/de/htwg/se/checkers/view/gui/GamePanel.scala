@@ -13,7 +13,7 @@ import de.htwg.se.checkers.model.enumeration.Colour
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
 import scala.swing.event.ButtonClicked
-import scala.swing.{Button, GridPanel, Label}
+import scala.swing.{ Button, GridPanel, Label }
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
@@ -120,7 +120,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
   def drawButton(move: ((Int, Int))): Unit = {
-    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
+    lastSelected :+= (move._1, move._2, fields(move._1)(move._2).background)
     fields(move._1)(move._2).background = selected
   }
 

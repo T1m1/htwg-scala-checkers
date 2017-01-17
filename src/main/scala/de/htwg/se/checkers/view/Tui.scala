@@ -2,13 +2,13 @@ package de.htwg.se.checkers.view
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import akka.pattern.ask
 import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{GameState, Piece, Playfield}
+import de.htwg.se.checkers.model.{ GameState, Piece, Playfield }
 
 import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
@@ -117,6 +117,5 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     //    }
 
   }
-
 
 }
