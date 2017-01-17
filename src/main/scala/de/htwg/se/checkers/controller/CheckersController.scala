@@ -1,10 +1,10 @@
 package de.htwg.se.checkers.controller
 
-import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
-import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
-import de.htwg.se.checkers.CheckerRules._
-import de.htwg.se.checkers.Utils._
+import com.escalatesoft.subcut.inject.{ BindingModule, Injectable }
+import de.htwg.se.checkers.BindingKeys.{ NumberOfPlayableRows, PlayfieldSize }
 import de.htwg.se.checkers.controller.command._
+import de.htwg.se.checkers.Utils.Utils._
+import de.htwg.se.checkers.Utils.CheckerRules._
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import de.htwg.se.checkers.model.{GameState, Piece, Playfield}

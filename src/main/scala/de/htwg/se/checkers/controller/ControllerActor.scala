@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.controller
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import de.htwg.se.checkers.CheckersConfiguration
 import de.htwg.se.checkers.controller.command._
 
@@ -19,7 +19,8 @@ class ControllerActor() extends Actor {
   override def receive: Receive = {
 
     // Handle register/deregister of Listeners
-    case RegisterUI => userInterfaces += sender(); sender() ! controller.getState
+    case RegisterUI =>
+      userInterfaces += sender(); sender() ! controller.getState
     case DeregisterUI => userInterfaces -= sender()
 
     // Ask - Pattern
