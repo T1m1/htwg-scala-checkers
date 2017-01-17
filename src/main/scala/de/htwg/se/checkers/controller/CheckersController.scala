@@ -92,7 +92,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
   }
 
-  def getPossibleTargets(c: Coord): Array[(Int, Int)] = {
+  def getPossibleTargets(c: Coord): Seq[Coord] = {
     val moves = calculatePossibleMoves(c)
 
     val captures = for {

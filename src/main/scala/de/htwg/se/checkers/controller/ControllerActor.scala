@@ -3,6 +3,7 @@ package de.htwg.se.checkers.controller
 import akka.actor.{ Actor, ActorRef }
 import de.htwg.se.checkers.CheckersConfiguration
 import de.htwg.se.checkers.controller.command._
+import de.htwg.se.checkers.model.{ Moves, Origins, Targets }
 
 import scala.collection.mutable.ListBuffer
 
@@ -24,10 +25,10 @@ class ControllerActor() extends Actor {
     case DeregisterUI => userInterfaces -= sender()
 
     // Ask - Pattern
-    case GetMoves => sender ! controller.getPossibleMoves
+    case GetMoves => sender ! Moves(controller.getPossibleMoves)
+    case GetPossiblePieces => sender ! Origins(controller.getPossiblePieces)
+    case GetPossibleTargets(coord) => sender ! Targets(controller.getPossibleTargets(coord))
     case GetCurrentPlayer => sender ! controller.currentPlayer
-    case GetPossiblePieces => sender ! controller.getPossiblePieces
-    case GetPossibleTargets(coord) => sender ! controller.getPossibleTargets(coord)
     case GameStatus => sender ! controller.getState
 
     // Handle command and notify all other Listeners

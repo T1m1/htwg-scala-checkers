@@ -2,15 +2,14 @@ package de.htwg.se.checkers.view
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import akka.pattern.ask
 import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command._
+import de.htwg.se.checkers.model._
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{ GameState, Piece, Playfield }
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
 import scala.io.StdIn
 import scala.util.matching.Regex
@@ -56,15 +55,15 @@ case class Tui(controllerActor: ActorRef) extends Actor {
         println("TODO start game")
       case "p" =>
         // print movable pieces
-        val pieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
-        pieces foreach printPossiblePieces
+        val pieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[Origins]
+        pieces.origins foreach printPossiblePieces
         println("\nYour turn: ")
         controllerActor ! GameStatus
       case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
-        val moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
-        moves foreach printPossibleMoves
+        val moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
+        moves.moves foreach printPossibleMoves
         controllerActor ! GameStatus
       case "f" => controllerActor ! GameStatus
       case Move(_*) => movePieceByInput(input)
