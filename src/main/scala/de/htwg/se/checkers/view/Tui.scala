@@ -2,7 +2,7 @@ package de.htwg.se.checkers.view
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{Actor, ActorRef}
+import akka.actor.{ Actor, ActorRef }
 import akka.pattern.ask
 import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command._

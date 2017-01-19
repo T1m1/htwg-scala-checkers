@@ -7,13 +7,13 @@ import javax.swing.ImageIcon
 import akka.actor.ActorRef
 import akka.pattern.ask
 import de.htwg.se.checkers.controller.command._
-import de.htwg.se.checkers.model.GameState
+import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.enumeration.Colour
+import de.htwg.se.checkers.model.{GameState, Moves, Origins, Targets}
 
-import scala.collection.immutable.IndexedSeq
 import scala.concurrent.Await
 import scala.swing.event.ButtonClicked
-import scala.swing.{ Button, GridPanel, Label }
+import scala.swing.{Button, GridPanel, Label}
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
@@ -92,12 +92,12 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
         button.icon = null
       }
     }
-    var a: Array[(Int, Int)] = Array()
+    var a: Array[Coord] = Array()
 
-    val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
-    val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
+    val possiblePieces: Origins = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[Origins]
+    val possibleMoves: Moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
 
-    for (elem <- possibleMoves) {
+    for (elem <- possibleMoves.moves) {
       a :+= elem._1
     }
 
@@ -128,10 +128,10 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     if (selectedPiece.isDefined) {
       // TODO refactor
 
-      val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
+      val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
 
-      var a: Array[(Int, Int)] = Array()
-      for (elem <- possibleMoves) {
+      var a: Array[Coord] = Array[Coord]()
+      for (elem <- possibleMoves.moves) {
         a :+= elem._2
       }
       if (a.contains((row, column))) {
@@ -142,13 +142,13 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
       }
     } else {
       lastSelected.foreach(field => fields(field._1)(field._2).background = field._3)
-      val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
-      val possibleTargets = Await.result(controllerActor ? GetPossibleTargets((row, column)), timeout.duration).asInstanceOf[Array[(Int, Int)]]
+      val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[Origins]
+      val possibleTargets = Await.result(controllerActor ? GetPossibleTargets((row, column)), timeout.duration).asInstanceOf[Targets]
 
-      if (possiblePieces.contains((row, column))) {
+      if (possiblePieces.origins.contains((row, column))) {
         drawButton((row, column))
         selectedPiece = Some((row, column))
-        possibleTargets.foreach(move => drawButton(move))
+        possibleTargets.targets.foreach(move => drawButton(move))
       }
     }
   }
