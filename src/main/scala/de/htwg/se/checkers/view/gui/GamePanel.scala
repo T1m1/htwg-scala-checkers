@@ -9,11 +9,11 @@ import akka.pattern.ask
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{GameState, Moves, Origins, Targets}
+import de.htwg.se.checkers.model.{ GameState, Moves, Origins, Targets }
 
 import scala.concurrent.Await
 import scala.swing.event.ButtonClicked
-import scala.swing.{Button, GridPanel, Label}
+import scala.swing.{ Button, GridPanel, Label }
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 

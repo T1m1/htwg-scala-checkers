@@ -1,13 +1,13 @@
 package de.htwg.se.checkers.controller
 
-import com.escalatesoft.subcut.inject.{ BindingModule, Injectable }
-import de.htwg.se.checkers.BindingKeys.{ NumberOfPlayableRows, PlayfieldSize }
+import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
+import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.Utils.Utils._
 import de.htwg.se.checkers.Utils.CheckerRules._
 import de.htwg.se.checkers.model.api._
-import de.htwg.se.checkers.model.enumeration.{ Colour, Direction }
-import de.htwg.se.checkers.model.{ GameState, Piece, Playfield }
+import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
+import de.htwg.se.checkers.model.{GameState, Piece, Playfield}
 
 import scala.collection.immutable.IndexedSeq
 
@@ -28,8 +28,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   var currentPlayer = Colour.BLACK
 
   /**
-   * logic for initializing the playfield
-   */
+    * logic for initializing the playfield
+    */
   def initPlayfield: Unit = {
     // set pieces for all player
     for {
@@ -45,8 +45,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   // not immutable!
   def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
 
-  def movePiece(origin: Coord, target: Coord): Unit = {
+  def movePiece(origin: Coord, target: Coord): Boolean = {
     // assert correct move
+    if (!isCorrectMove(origin, target)) return false
     assume(isCorrectMove(origin, target))
 
     // unset piece
@@ -62,6 +63,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(currentPlayer)))
     nextPlayer
+    true
   }
 
   def getPossiblePieces: IndexedSeq[(Int, Int)] = {
@@ -146,21 +148,21 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   }
 
   /**
-   * Helper method to determine if a move is correct
-   *
-   * @param origin start position of piece
-   * @param target end position of piece
-   * @return true, if the move is correct
-   */
+    * Helper method to determine if a move is correct
+    *
+    * @param origin start position of piece
+    * @param target end position of piece
+    * @return true, if the move is correct
+    */
   def isCorrectMove(origin: Coord, target: Coord): Boolean = playfield(target).isEmpty &&
     playfield(origin).exists(_.colour == currentPlayer) && getPossibleMoves.contains(new Move(origin, target))
 
   /**
-   * handle a generic command
-   *
-   * @param command
-   * @return
-   */
+    * handle a generic command
+    *
+    * @param command
+    * @return
+    */
   def handleCommand(command: Command): GameState = {
     command match {
       case QuitGame() => getState
