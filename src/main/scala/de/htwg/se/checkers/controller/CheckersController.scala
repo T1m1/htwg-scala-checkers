@@ -1,7 +1,7 @@
 package de.htwg.se.checkers.controller
 
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
-import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
+import de.htwg.se.checkers.BindingKeys.{ColourPlayerOne, ColourPlayerTwo, NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.Utils.Utils._
 import de.htwg.se.checkers.Utils.CheckerRules._
@@ -13,11 +13,15 @@ import scala.collection.immutable.IndexedSeq
 
 class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
 
-  def getState: GameState = GameState(playfield, currentPlayer)
-
   // Inject
   val rows: Int = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
-  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 2
+  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 10
+  val playerOne: Colour.Value = injectOptional[Colour.Value](ColourPlayerOne) getOrElse Colour.BLACK
+  val playerTwo: Colour.Value = injectOptional[Colour.Value](ColourPlayerTwo) getOrElse Colour.WHITE
+
+
+  def getState: GameState = GameState(playfield, currentPlayer)
+
 
   var playfield: Playfield = new Playfield(size)
 
@@ -25,7 +29,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   initPlayfield
 
-  var currentPlayer = Colour.BLACK
+
+  var currentPlayer = playerOne
 
   /**
     * logic for initializing the playfield
