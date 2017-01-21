@@ -25,7 +25,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   val possible = Color.decode("#FFFB1E")
   val selected = Color.decode("#3AFC3D")
   val screenSize = Toolkit.getDefaultToolkit.getScreenSize
-  val dim = screenSize.height / 11
+  val dim = screenSize.height / 14
   var fields: Array[Array[Button]] = Array.ofDim[Button](8, 8)
 
   var lastSelected: Array[(Int, Int, Color)] = Array()
@@ -126,8 +126,6 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
   def displayPossibleMoves(row: Int, column: Int): Unit = {
     if (selectedPiece.isDefined) {
-      // TODO refactor
-
       val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
 
       var a: Array[Coord] = Array[Coord]()

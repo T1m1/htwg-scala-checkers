@@ -20,7 +20,7 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
 
   peer.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE)
 
-  val dim = Toolkit.getDefaultToolkit.getScreenSize.height - 100
+  val dim = Toolkit.getDefaultToolkit.getScreenSize.height - 300
   size = new Dimension(dim, dim)
   visible = true
 
