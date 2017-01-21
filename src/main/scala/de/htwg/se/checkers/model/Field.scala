@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.model
 
-import de.htwg.se.checkers.Utils._
+import de.htwg.se.checkers.Utils.Utils._
 
 case class Field(x: Int, y: Int, piece: Option[Piece]) {
   //assert(!isPlayable && piece.isDefined)

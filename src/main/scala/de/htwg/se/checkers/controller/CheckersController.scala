@@ -2,9 +2,9 @@ package de.htwg.se.checkers.controller
 
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
 import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
-import de.htwg.se.checkers.CheckerRules._
-import de.htwg.se.checkers.Utils._
 import de.htwg.se.checkers.controller.command._
+import de.htwg.se.checkers.Utils.Utils._
+import de.htwg.se.checkers.Utils.CheckerRules._
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.{Colour, Direction}
 import de.htwg.se.checkers.model.{GameState, Piece, Playfield}
@@ -45,8 +45,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
   // not immutable!
   def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
 
-  def movePiece(origin: Coord, target: Coord): Unit = {
+  def movePiece(origin: Coord, target: Coord): Boolean = {
     // assert correct move
+    if (!isCorrectMove(origin, target)) return false
     assume(isCorrectMove(origin, target))
 
     // unset piece
@@ -62,6 +63,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     // set piece
     playfield = playfield.setPiece(target, Some(new Piece(currentPlayer)))
     nextPlayer
+    true
   }
 
   def getPossiblePieces: IndexedSeq[(Int, Int)] = {
@@ -92,7 +94,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
   }
 
-  def getPossibleTargets(c: Coord): Array[(Int, Int)] = {
+  def getPossibleTargets(c: Coord): Seq[Coord] = {
     val moves = calculatePossibleMoves(c)
 
     val captures = for {

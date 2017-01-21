@@ -1,5 +1,6 @@
 package de.htwg.se.checkers.model.enumeration
 
+import de.htwg.se.checkers.Utils.EnumUtils
 import play.api.libs.json._
 
 object Colour extends Enumeration {
@@ -8,9 +9,8 @@ object Colour extends Enumeration {
   val BLACK = Value("Black")
   val WHITE = Value("White")
 
-  implicit val ColourFormat = new Format[Colour] {
-    def reads(json: JsValue) = JsSuccess(Colour.withName(json.as[String]))
+  implicit def enumReads: Reads[Colour] = EnumUtils.enumReads(Colour)
 
-    def writes(myEnum: Colour) = JsString(myEnum.toString)
-  }
+  implicit def enumWrites: Writes[Colour] = EnumUtils.enumWrites
+
 }
