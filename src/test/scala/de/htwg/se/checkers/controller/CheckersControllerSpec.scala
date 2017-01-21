@@ -2,7 +2,7 @@ package de.htwg.se.checkers.controller
 
 import java.util
 
-import de.htwg.se.checkers.CheckersConfiguration
+import CheckersConfiguration
 import de.htwg.se.checkers.model.Piece
 import de.htwg.se.checkers.model.enumeration.Colour
 import org.scalatest._
@@ -10,15 +10,25 @@ import org.scalatest._
 class CheckersControllerSpec extends WordSpec with Matchers {
 
 
-  "A new Controller with CheckersConfiguration injection" should {
-    val ctr = new CheckersController()(CheckersConfiguration)
+  "A new Controller with CheckersTestConfiguration injection" should {
+    val ctr = new CheckersController()(CheckersTestConfiguration)
 
-    "be 3 playable rows" in {
+    "have 3 playable rows" in {
       ctr.rows should be(3)
     }
-    "be a size of 8" in {
+    "have a size of 8" in {
       ctr.size should be(8)
     }
+
+    "the first player should be BLACK" in {
+      ctr.playerOne should be(Colour.BLACK)
+    }
+
+    "the second player should be WHITE" in {
+      ctr.playerOne should be(Colour.WHITE)
+    }
+
+
   }
 
 }
