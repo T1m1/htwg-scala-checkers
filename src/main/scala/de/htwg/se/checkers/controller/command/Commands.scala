@@ -6,7 +6,7 @@ trait Command {}
 
 case class SetPiece(start: Coord, end: Coord) extends Command
 
-case class QuitGame() extends Command
+case class QuitGame()
 
 case class NewGame() extends Command
 

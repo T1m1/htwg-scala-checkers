@@ -10,3 +10,5 @@ case class Targets(targets: Seq[Coord])
 case class Origins(origins: Seq[Coord])
 
 case class Moves(moves: Seq[(Coord, Coord)])
+
+case class Exit()

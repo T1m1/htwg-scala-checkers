@@ -1,9 +1,9 @@
 package de.htwg.se.checkers.controller
 
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.CheckersConfiguration
 import de.htwg.se.checkers.controller.command._
-import de.htwg.se.checkers.model.{ Moves, Origins, Targets }
+import de.htwg.se.checkers.model._
 
 import scala.collection.mutable.ListBuffer
 
@@ -32,6 +32,8 @@ class ControllerActor() extends Actor {
     case GameStatus => sender ! controller.getState
 
     // Handle command and notify all other Listeners
+    case QuitGame => userInterfaces.foreach(_ ! Exit())
+
     case command: Command =>
       val state = controller.handleCommand(command)
       // update listener

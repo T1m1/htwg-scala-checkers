@@ -3,7 +3,7 @@ package de.htwg.se.checkers.view.gui
 import akka.actor.{Actor, ActorRef}
 import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command.QuitGame
-import de.htwg.se.checkers.model.GameState
+import de.htwg.se.checkers.model.{Exit, GameState}
 
 class Gui(controllerActor: ActorRef) extends Actor {
   controllerActor ! RegisterUI
@@ -12,6 +12,6 @@ class Gui(controllerActor: ActorRef) extends Actor {
 
   override def receive: Receive = {
     case state: GameState => frame.update(state)
-    case state: QuitGame => frame.dispose
+    case exit: Exit => frame.exit
   }
 }

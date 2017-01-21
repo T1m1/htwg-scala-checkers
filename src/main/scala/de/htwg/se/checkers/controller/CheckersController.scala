@@ -165,7 +165,6 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     */
   def handleCommand(command: Command): GameState = {
     command match {
-      case QuitGame() => getState
       case SetPiece(start, end) =>
         movePiece(start, end); getState
       case GameStatus() => getState

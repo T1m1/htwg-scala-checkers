@@ -33,7 +33,7 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     case update: GameState =>
       printField(update.field)
       printGameOptions(update.currentPlayer)
-    case quit: QuitGame => continue = false
+    case exit: Exit => continue = false; System.exit(0)
   }
 
   val ALPHABET: Array[Char] = ('A' to 'Z').toArray
@@ -54,7 +54,7 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     )
   }
 
-  def processInputLine(input: String): Boolean = {
+  def processInputLine(input: String) = {
     input match {
       case "q" => controllerActor ! QuitGame
       case "s" =>

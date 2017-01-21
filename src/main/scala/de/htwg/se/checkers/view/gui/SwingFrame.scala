@@ -10,6 +10,8 @@ import scala.swing._
 import scala.swing.event.Key
 
 class SwingFrame(controllerActor: ActorRef) extends Frame {
+  def exit: Unit =  dispose()
+
   title = "Checkers"
   menuBar = buildMenuBar
 
