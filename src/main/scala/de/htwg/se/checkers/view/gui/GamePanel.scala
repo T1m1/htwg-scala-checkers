@@ -9,11 +9,14 @@ import akka.pattern.ask
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.model.api.Coord
 import de.htwg.se.checkers.model.enumeration.Colour
-import de.htwg.se.checkers.model.{ GameState, Moves, Origins, Targets }
+import de.htwg.se.checkers.model._
 
-import scala.concurrent.Await
+import scala.collection.immutable.IndexedSeq
+import scala.concurrent.{Await, Future}
 import scala.swing.event.ButtonClicked
-import scala.swing.{ Button, GridPanel, Label }
+import scala.swing.{Button, GridPanel, Label}
+import scala.util.{Failure, Success}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
 
@@ -65,47 +68,55 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     contents += button
   }
 
-  def updateBoard(state: GameState): Unit = {
-    selectedPiece = None
-    lastSelected = Array()
-    val board = state.field.board
-    val switchedBoard = for {
-      i <- board.indices
-    } yield for {
-      j <- board.indices
-    } yield board(j)(i)
+  def onFailure(e: Throwable): Unit = println("huhu")
 
-    for {
-      i <- switchedBoard.indices
-      j <- switchedBoard(i).indices
-    } {
-      val button = fields(j)(i)
+  def drawButton(switchedBoard: IndexedSeq[IndexedSeq[Option[Piece]]], j: Int, i: Int, movablePieces: Array[(Int, Int)]): Unit = {
+    val button = fields(j)(i)
+    if (movablePieces.contains((j, i))) {
+      button.background = possible
+    } else {
       if ((i + j) % 2 == 1) {
         button.background = dark
       } else {
         button.background = light
       }
-      // set figures
-      if (switchedBoard(i)(j).isDefined) {
-        button.icon = new ImageIcon(scaleImageIcon(switchedBoard(i)(j).get.colour))
-      } else {
-        button.icon = null
-      }
     }
-    var a: Array[Coord] = Array()
+
+
+
+    // set figures
+    if (switchedBoard(i)(j).isDefined) {
+      button.icon = new ImageIcon(scaleImageIcon(switchedBoard(i)(j).get.colour))
+    } else {
+      button.icon = null
+    }
+  }
+
+
+  def updateBoard(state: GameState): Unit = {
+    selectedPiece = None
+    lastSelected = Array()
+
+    var movablePiece: Array[Coord] = Array()
 
     val possiblePieces: Origins = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[Origins]
     val possibleMoves: Moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
 
     for (elem <- possibleMoves.moves) {
-      a :+= elem._1
+      movablePiece :+= elem._1
     }
 
-    for (
-      i <- a
-    ) {
-      fields(i._1)(i._2).background = possible
-    }
+    val switchedBoard = state.field.board
+    val board = for {
+      i <- switchedBoard.indices
+    } yield for {
+      j <- switchedBoard.indices
+    } yield switchedBoard(j)(i)
+
+    for {
+      i <- board.indices
+      j <- board(i).indices
+    } Future(drawButton(board, i, j, movablePiece))
 
   }
 
@@ -120,7 +131,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
   def drawButton(move: ((Int, Int))): Unit = {
-    lastSelected :+= (move._1, move._2, fields(move._1)(move._2).background)
+    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
     fields(move._1)(move._2).background = selected
   }
 
