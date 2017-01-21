@@ -1,8 +1,9 @@
 package de.htwg.se.checkers.view.gui
 
-import java.awt.{ Dimension, Toolkit }
+import java.awt.{Dimension, Toolkit}
 
 import akka.actor.ActorRef
+import de.htwg.se.checkers.controller.command.QuitGame
 import de.htwg.se.checkers.model.GameState
 
 import scala.swing._
@@ -36,7 +37,7 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
           controllerActor ! println("restart game")
         })
         contents += new MenuItem(Action("Quit") {
-          controllerActor ! println("quit game")
+          controllerActor ! QuitGame
         })
       }
     }
