@@ -7,8 +7,7 @@ import de.htwg.se.checkers.view.gui.Gui
 
 object Checkers {
 
-  // inject
-  implicit val bindingModule = CheckersConfiguration
+
 
   def main(args: Array[String]): Unit = {
     val actorSystem = ActorSystem.create("checkers")
