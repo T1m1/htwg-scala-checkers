@@ -2,7 +2,7 @@ package de.htwg.se.checkers.view
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.{ Actor, ActorRef }
+import akka.actor.{Actor, ActorRef}
 import akka.pattern.ask
 import de.htwg.se.checkers.controller.RegisterUI
 import de.htwg.se.checkers.controller.command._
@@ -10,22 +10,30 @@ import de.htwg.se.checkers.model._
 import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.Await
 import scala.io.StdIn
+import scala.util.{Failure, Random, Success}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
 case class Tui(controllerActor: ActorRef) extends Actor {
-
   implicit val timeout = akka.util.Timeout(5, TimeUnit.SECONDS)
+  var continue = true
 
   controllerActor ! RegisterUI
+
+  Future(asyncInput).onComplete {
+    case Success(value) => println(s"Game finished!")
+    case Failure(e) => e.printStackTrace()
+  }
 
   override def receive: Receive = {
     case update: GameState =>
       printField(update.field)
       printGameOptions(update.currentPlayer)
-      processInputLine(StdIn.readLine())
+
   }
 
   val ALPHABET: Array[Char] = ('A' to 'Z').toArray
@@ -115,6 +123,15 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     //      controllerActor ! PrintInfo
     //    }
 
+  }
+
+  def asyncInput = {
+    do {
+      if (Console.in.ready()) {
+        processInputLine(Console.in.readLine())
+      }
+      Thread.sleep(100)
+    } while (continue)
   }
 
 }
