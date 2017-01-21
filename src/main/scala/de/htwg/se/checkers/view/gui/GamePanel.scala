@@ -94,7 +94,6 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
     }
     var a: Array[(Int, Int)] = Array()
 
-    val possiblePieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[IndexedSeq[(Int, Int)]]
     val possibleMoves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[IndexedSeq[((Int, Int), (Int, Int))]]
 
     for (elem <- possibleMoves) {
@@ -120,7 +119,7 @@ class GamePanel(controllerActor: ActorRef) extends GridPanel(0, 9) {
   }
 
   def drawButton(move: ((Int, Int))): Unit = {
-    lastSelected :+=(move._1, move._2, fields(move._1)(move._2).background)
+    lastSelected :+= (move._1, move._2, fields(move._1)(move._2).background)
     fields(move._1)(move._2).background = selected
   }
 
