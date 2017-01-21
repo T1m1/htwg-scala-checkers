@@ -33,7 +33,7 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     case update: GameState =>
       printField(update.field)
       printGameOptions(update.currentPlayer)
-
+    case quit: QuitGame => continue = false
   }
 
   val ALPHABET: Array[Char] = ('A' to 'Z').toArray
