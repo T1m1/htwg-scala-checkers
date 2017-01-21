@@ -55,10 +55,8 @@ case class Tui(controllerActor: ActorRef) extends Actor {
   }
 
   def processInputLine(input: String): Boolean = {
-    var continue = true
-
     input match {
-      case "q" => continue = false
+      case "q" => controllerActor ! QuitGame
       case "s" =>
         println("TODO start game")
       case "p" =>
@@ -79,7 +77,6 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     }
 
     println
-    continue
   }
 
   def printField(playfield: Playfield): Unit = {
