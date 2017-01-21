@@ -41,14 +41,14 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
       i <- playfield.board.indices
       j <- 0 until rows
     } if ((i + j).isOdd) {
-      playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
+      playfield = playfield.setPiece((i, j), Some(new Piece(playerOne)))
     } else {
-      playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
+      playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(playerTwo)))
     }
   }
 
   // not immutable!
-  def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
+  def nextPlayer: Unit = if (currentPlayer.equals(playerOne)) currentPlayer = playerTwo else currentPlayer = playerOne
 
   def movePiece(origin: Coord, target: Coord): Boolean = {
     // assert correct move
@@ -120,7 +120,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
     // search only if piece is on coordinate
     if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(currentPlayer)) {
-      if (currentPlayer.equals(Colour.BLACK)) {
+      if (currentPlayer.equals(playerOne)) {
         recMoves(c._1 - 1, c._2 + 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 + 1, Direction.RIGHT, 1)
       } else {
         recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1)
@@ -134,7 +134,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def newPositionX(x: Integer, direction: Direction.Value): Integer = if (direction.equals(Direction.LEFT)) x - 1 else x + 1
 
-  def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
+  def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(playerOne)) y + 1 else y - 1
 
   @scala.annotation.tailrec
   final def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int): Array[CoordStep] = {

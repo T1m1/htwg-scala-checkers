@@ -15,15 +15,15 @@ object BindingKeys {
 
 }
 
-  object CheckersConfiguration extends NewBindingModule(module => {
-    import BindingKeys._
-    import module._
+object CheckersConfiguration extends NewBindingModule(module => {
+  import BindingKeys._
+  import module._
 
-    bind[Int] idBy PlayfieldSize toSingle 8
-    bind[Int] idBy NumberOfPlayableRows toSingle 3
-    bind[Colour.Value] idBy ColourPlayerOne toSingle Colour.BLACK
-    bind[Colour.Value] idBy ColourPlayerTwo toSingle Colour.WHITE
+  bind[Int] idBy PlayfieldSize toSingle 8
+  bind[Int] idBy NumberOfPlayableRows toSingle 3
+  bind[Colour.Value] idBy ColourPlayerOne toSingle Colour.BLACK
+  bind[Colour.Value] idBy ColourPlayerTwo toSingle Colour.WHITE
 
-  })
+})
 
 
