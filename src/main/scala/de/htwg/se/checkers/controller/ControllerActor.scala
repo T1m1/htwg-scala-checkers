@@ -14,6 +14,8 @@ case object DeregisterUI
 class ControllerActor() extends Actor {
   implicit val bindingModule = CheckersConfiguration
 
+  val inject = bindingModule
+
   val controller: CheckersController = new CheckersController()(bindingModule)
   val userInterfaces = new ListBuffer[ActorRef]()
 
@@ -30,6 +32,7 @@ class ControllerActor() extends Actor {
     case GetPossibleTargets(coord) => sender ! Targets(controller.getPossibleTargets(coord))
     case GetCurrentPlayer => sender ! controller.currentPlayer
     case GameStatus => sender ! controller.getState
+    case GetPlayfieldSize => sender ! controller.size
 
     // Handle command and notify all other Listeners
     case QuitGame => userInterfaces.foreach(_ ! Exit())

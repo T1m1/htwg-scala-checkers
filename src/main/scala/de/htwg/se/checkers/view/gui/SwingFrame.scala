@@ -3,6 +3,7 @@ package de.htwg.se.checkers.view.gui
 import java.awt.{ Dimension, Toolkit }
 
 import akka.actor.ActorRef
+import de.htwg.se.checkers.CheckersConfiguration
 import de.htwg.se.checkers.controller.command.QuitGame
 import de.htwg.se.checkers.model.GameState
 
@@ -15,7 +16,8 @@ class SwingFrame(controllerActor: ActorRef) extends Frame {
   title = "Checkers"
   menuBar = buildMenuBar
 
-  val gamePanel = new GamePanel(controllerActor)
+  implicit val bindingModule = CheckersConfiguration
+  val gamePanel = new InjectablePanel(controllerActor)(bindingModule).gamePanel
 
   contents = new BorderPanel {
     layout(gamePanel) = BorderPanel.Position.Center

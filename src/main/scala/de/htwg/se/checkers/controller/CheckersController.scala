@@ -1,7 +1,7 @@
 package de.htwg.se.checkers.controller
 
 import com.escalatesoft.subcut.inject.{BindingModule, Injectable}
-import de.htwg.se.checkers.BindingKeys.{NumberOfPlayableRows, PlayfieldSize}
+import de.htwg.se.checkers.BindingKeys.{ColourPlayerOne, ColourPlayerTwo, NumberOfPlayableRows, PlayfieldSize}
 import de.htwg.se.checkers.controller.command._
 import de.htwg.se.checkers.Utils.Utils._
 import de.htwg.se.checkers.Utils.CheckerRules._
@@ -17,7 +17,13 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   // Inject
   val rows: Int = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
-  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 2
+  val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 10
+  val playerOne: Colour.Value = injectOptional[Colour.Value](ColourPlayerOne) getOrElse Colour.BLACK
+  val playerTwo: Colour.Value = injectOptional[Colour.Value](ColourPlayerTwo) getOrElse Colour.WHITE
+
+
+  def getState: GameState = GameState(playfield, currentPlayer)
+
 
   var playfield: Playfield = new Playfield(size)
 
@@ -25,7 +31,8 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   initPlayfield
 
-  var currentPlayer = Colour.BLACK
+
+  var currentPlayer = playerOne
 
   /**
     * logic for initializing the playfield
@@ -36,12 +43,12 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
       i <- playfield.board.indices
       j <- 0 until rows
     }
-      if ((i + j).isOdd) playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
-      else playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
+      if ((i + j).isOdd) playfield = playfield.setPiece((i, j), Some(new Piece(playerOne)))
+      else playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(playerTwo)))
   }
 
   // not immutable!
-  def nextPlayer: Unit = if (currentPlayer.equals(Colour.BLACK)) currentPlayer = Colour.WHITE else currentPlayer = Colour.BLACK
+  def nextPlayer: Unit = if (currentPlayer.equals(playerOne)) currentPlayer = playerTwo else currentPlayer = playerOne
 
   def movePiece(origin: Coord, target: Coord): Boolean = {
     // assert correct move
@@ -113,7 +120,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     }
     // search only if piece is on coordinate
     if (playfield.board(c._1)(c._2).isDefined && playfield.board(c._1)(c._2).get.colour.equals(currentPlayer)) {
-      if (currentPlayer.equals(Colour.BLACK)) {
+      if (currentPlayer.equals(playerOne)) {
         recMoves(c._1 - 1, c._2 + 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 + 1, Direction.RIGHT, 1)
       } else {
         recMoves(c._1 - 1, c._2 - 1, Direction.LEFT, 1) ++ recMoves(c._1 + 1, c._2 - 1, Direction.RIGHT, 1)
@@ -127,7 +134,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
 
   def newPositionX(x: Integer, direction: Direction.Value): Integer = if (direction.equals(Direction.LEFT)) x - 1 else x + 1
 
-  def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(Colour.BLACK)) y + 1 else y - 1
+  def newPositionY(y: Integer, colour: Colour.Value): Integer = if (colour.equals(playerOne)) y + 1 else y - 1
 
   @scala.annotation.tailrec
   final def recMoves(x: Int, y: Int, direction: Direction.Value, deep: Int): Array[CoordStep] = {

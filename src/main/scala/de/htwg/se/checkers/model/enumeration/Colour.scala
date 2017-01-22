@@ -8,6 +8,7 @@ object Colour extends Enumeration {
   type Colour = Value
   val BLACK = Value("Black")
   val WHITE = Value("White")
+  val HTWG = Value("Htwg")
 
   implicit def enumReads: Reads[Colour] = EnumUtils.enumReads(Colour)
 

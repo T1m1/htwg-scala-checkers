@@ -1,4 +1,4 @@
-package de.htwg.se.checkers
+package de.htwg.se.checkers.controller
 
 import com.escalatesoft.subcut.inject._
 import de.htwg.se.checkers.model.enumeration.Colour
@@ -15,7 +15,7 @@ object BindingKeys {
 
 }
 
-object CheckersConfiguration extends NewBindingModule(module => {
+object CheckersTestConfiguration extends NewBindingModule(module => {
   import BindingKeys._
   import module._
 
