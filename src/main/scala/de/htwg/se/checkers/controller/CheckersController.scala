@@ -13,8 +13,6 @@ import scala.collection.immutable.IndexedSeq
 
 class CheckersController()(implicit val bindingModule: BindingModule) extends Injectable {
 
-  def getState: GameState = GameState(playfield, currentPlayer)
-
   // Inject
   val rows: Int = injectOptional[Int](NumberOfPlayableRows) getOrElse 2
   val size: Int = injectOptional[Int](PlayfieldSize) getOrElse 10
