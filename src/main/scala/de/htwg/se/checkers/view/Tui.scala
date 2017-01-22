@@ -11,12 +11,10 @@ import de.htwg.se.checkers.model.api._
 import de.htwg.se.checkers.model.enumeration.Colour
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
-import scala.concurrent.Await
-import scala.io.StdIn
-import scala.util.{Failure, Random, Success}
+import scala.concurrent.{Await, Future}
 import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
+import scala.util.{Failure, Success}
 
 case class Tui(controllerActor: ActorRef) extends Actor {
   implicit val timeout = akka.util.Timeout(5, TimeUnit.SECONDS)
@@ -54,22 +52,32 @@ case class Tui(controllerActor: ActorRef) extends Actor {
     )
   }
 
-  def processInputLine(input: String) = {
+  def processInputLine(input: String): Unit = {
     input match {
       case "q" => controllerActor ! QuitGame
-      case "s" =>
-        println("TODO start game")
+      case "n" =>
+        println("Starting a new game")
+        controllerActor !  NewGame()
+
+
       case "p" =>
-        // print movable pieces
-        val pieces = Await.result(controllerActor ? GetPossiblePieces, timeout.duration).asInstanceOf[Origins]
-        pieces.origins foreach printPossiblePieces
+        // Ask - Pattern
+        val piecesFuture: Future[Any] = controllerActor ? GetPossiblePieces
+
+        // blocking wait
+        val origins = Await.result(piecesFuture, timeout.duration).asInstanceOf[Origins].origins
+
+        // print the pieces
+        origins foreach printPossiblePieces
+
+
+
         println("\nYour turn: ")
         controllerActor ! GameStatus
-      case "n" => print("TODO start new game")
       case "m" =>
         // print possible moves
-        val moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves]
-        moves.moves foreach printPossibleMoves
+        val moves = Await.result(controllerActor ? GetMoves, timeout.duration).asInstanceOf[Moves].moves
+        moves foreach printPossibleMoves
         controllerActor ! GameStatus
       case "f" => controllerActor ! GameStatus
       case Move(_*) => movePieceByInput(input)
@@ -99,11 +107,11 @@ case class Tui(controllerActor: ActorRef) extends Actor {
 
   def pieceToString(piece: Piece): String = if (piece.colour == Colour.BLACK) "\u25CF" else "\u25CB"
 
-  def printPossiblePieces(piece: (Int, Int)): Unit = print("(" + getCoordinate(piece) + ")")
+  def printPossiblePieces(piece: Coord): Unit = print("(" + getCoordinate(piece) + ")")
 
-  def printPossibleMoves(move: ((Int, Int), (Int, Int))): Unit = print(getCoordinate(move._1) + "-" + getCoordinate(move._2) + " ")
+  def printPossibleMoves(move: Move): Unit = print(getCoordinate(move._1) + "-" + getCoordinate(move._2) + " ")
 
-  def getCoordinate(coordinate: (Int, Int)): String = ALPHABET(coordinate._2) + "" + coordinate._1
+  def getCoordinate(coordinate: Coord): String = ALPHABET(coordinate._2) + "" + coordinate._1
 
   def movePieceByInput(input: String): Unit = Move.findAllIn(input).matchData foreach (m => parseGroupsAndMove(m))
 

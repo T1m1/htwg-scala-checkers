@@ -35,11 +35,9 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     for {
       i <- playfield.board.indices
       j <- 0 until rows
-    } if ((i + j).isOdd) {
-      playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
-    } else {
-      playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
     }
+      if ((i + j).isOdd) playfield = playfield.setPiece((i, j), Some(new Piece(Colour.BLACK)))
+      else playfield = playfield.setPiece((i, playfield.board.length - j - 1), Some(new Piece(Colour.WHITE)))
   }
 
   // not immutable!
@@ -74,7 +72,7 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     } yield new Coord(i, j)
   }
 
-  def getPossibleMoves: IndexedSeq[((Int, Int), (Int, Int))] = {
+  def getPossibleMoves: IndexedSeq[Move] = {
     val moves = for {
       i <- playfield.board.indices
       j <- playfield.board(i).indices
@@ -165,6 +163,10 @@ class CheckersController()(implicit val bindingModule: BindingModule) extends In
     */
   def handleCommand(command: Command): GameState = {
     command match {
+      case NewGame() =>
+        playfield = new Playfield(size)
+        initPlayfield
+        getState
       case SetPiece(start, end) =>
         movePiece(start, end); getState
       case GameStatus() => getState

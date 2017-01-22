@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.view.gui
 
-import java.awt.{Dimension, Toolkit}
+import java.awt.{ Dimension, Toolkit }
 
 import akka.actor.ActorRef
 import de.htwg.se.checkers.controller.command.QuitGame
@@ -10,7 +10,7 @@ import scala.swing._
 import scala.swing.event.Key
 
 class SwingFrame(controllerActor: ActorRef) extends Frame {
-  def exit: Unit =  dispose()
+  def exit: Unit = dispose()
 
   title = "Checkers"
   menuBar = buildMenuBar

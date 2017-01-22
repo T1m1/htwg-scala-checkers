@@ -1,6 +1,5 @@
 package de.htwg.se.checkers.model
 
-import de.htwg.se.checkers.model.enumeration.Colour
 import org.scalatest._
 
 class FieldSpec extends WordSpec with Matchers {
@@ -19,8 +18,5 @@ class FieldSpec extends WordSpec with Matchers {
       field.y should be(y)
     }
 
-    "should be playable" in {
-      field.isPlayable should be(true)
-    }
   }
 }

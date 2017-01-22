@@ -1,6 +1,6 @@
 package de.htwg.se.checkers.controller.command
 
-import de.htwg.se.checkers.model.api._
+import de.htwg.se.checkers.model.api.Coord
 
 trait Command {}
 
